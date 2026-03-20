@@ -85,10 +85,11 @@
         }
 
         #gameCanvas {
-            border: 3px solid white;
-            background-color: #000;
+            border: 5px solid #FFD700;
+            background-color: #0a0a0a;
             display: none;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
         }
 
         .right-panel {
@@ -155,18 +156,6 @@
             color: #FFD700;
             font-weight: bold;
             min-width: 30px;
-        }
-
-        .score-position.first {
-            color: #FFD700;
-        }
-
-        .score-position.second {
-            color: #C0C0C0;
-        }
-
-        .score-position.third {
-            color: #CD7F32;
         }
 
         .instructions {
@@ -270,7 +259,7 @@
                     </div>
                 </div>
 
-                <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡️ ⬇️</div>
+                <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡��� ⬇️</div>
                 
                 <div class="leaderboard">
                     <h3>🏆 Top 10 Scores</h3>
@@ -286,7 +275,7 @@
         <div class="instructions" id="instructions">
             <p>👈 Haz clic en "Iniciar Juego" para empezar</p>
             <p>⬅️ Usa las flechas del teclado para moverte</p>
-            <p>🍎 Come el punto rojo para ganar puntos</p>
+            <p>🍎 Come la manzana para ganar puntos</p>
             <p>⚡ Elige el nivel de dificultad antes de jugar</p>
             <p><strong>¡Evita los bordes y no chokes contigo misma!</strong></p>
         </div>
@@ -308,7 +297,7 @@
         let nextDirection = { x: 1, y: 0 };
 
         // Variables de velocidad
-        let gameSpeed = 150;  // En milisegundos
+        let gameSpeed = 150;
         let currentDifficulty = 'normal';
 
         // Array de scores
@@ -358,7 +347,6 @@
             currentDifficulty = difficulty;
             gameSpeed = difficulties[difficulty].speed;
             
-            // Actualizar botones
             document.getElementById('btnEasy').classList.remove('active');
             document.getElementById('btnNormal').classList.remove('active');
             document.getElementById('btnHard').classList.remove('active');
@@ -366,12 +354,10 @@
             
             document.getElementById('btn' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1)).classList.add('active');
             
-            // Actualizar info
             document.getElementById('difficultyName').textContent = 'Dificultad: ' + difficulties[difficulty].name;
             document.getElementById('difficultySpeed').textContent = 'Velocidad: ' + gameSpeed + 'ms';
             document.getElementById('difficultyName').style.color = difficulties[difficulty].color;
             
-            // Si el juego está corriendo, reiniciar con nueva velocidad
             if (gameRunning) {
                 if (gameInterval) clearInterval(gameInterval);
                 gameInterval = setInterval(gameLoop, gameSpeed);
@@ -383,13 +369,11 @@
             document.getElementById('speedValue').textContent = 'Velocidad: ' + gameSpeed + 'ms (más bajo = más rápido)';
             currentDifficulty = 'custom';
             
-            // Actualizar botones
             document.getElementById('btnEasy').classList.remove('active');
             document.getElementById('btnNormal').classList.remove('active');
             document.getElementById('btnHard').classList.remove('active');
             document.getElementById('btnExtreme').classList.remove('active');
             
-            // Si el juego está corriendo, reiniciar con nueva velocidad
             if (gameRunning) {
                 if (gameInterval) clearInterval(gameInterval);
                 gameInterval = setInterval(gameLoop, gameSpeed);
@@ -404,7 +388,6 @@
             document.getElementById('debug').style.display = 'block';
             document.getElementById('instructions').style.display = 'none';
 
-            // Reiniciar variables
             snake = [
                 { x: 10, y: 10 },
                 { x: 9, y: 10 },
@@ -474,11 +457,106 @@
             draw();
         }
 
+        function drawSnakeSegment(x, y, isHead, direction) {
+            const padding = 2;
+            const size = box - padding * 2;
+            
+            if (isHead) {
+                // Dibujar cabeza más realista
+                ctx.fillStyle = '#00ff00';
+                ctx.beginPath();
+                ctx.roundRect(x + padding, y + padding, size, size, [8]);
+                ctx.fill();
+                
+                // Sombra para profundidad
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.roundRect(x + padding + 2, y + padding + 2, size - 4, size - 4, [6]);
+                ctx.fill();
+                
+                // Ojos según dirección
+                ctx.fillStyle = '#000';
+                const eyeSize = 3;
+                const eyeOffset = 5;
+                
+                if (direction.x === 1) { // Derecha
+                    ctx.fillRect(x + eyeOffset + 3, y + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + 3, y + eyeOffset + 8, eyeSize, eyeSize);
+                } else if (direction.x === -1) { // Izquierda
+                    ctx.fillRect(x + padding + 1, y + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(x + padding + 1, y + eyeOffset + 8, eyeSize, eyeSize);
+                } else if (direction.y === -1) { // Arriba
+                    ctx.fillRect(x + eyeOffset, y + padding + 1, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + 8, y + padding + 1, eyeSize, eyeSize);
+                } else if (direction.y === 1) { // Abajo
+                    ctx.fillRect(x + eyeOffset, y + eyeOffset + 3, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + 8, y + eyeOffset + 3, eyeSize, eyeSize);
+                }
+            } else {
+                // Cuerpo con gradiente
+                let gradient = ctx.createLinearGradient(x, y, x + box, y + box);
+                gradient.addColorStop(0, '#00dd00');
+                gradient.addColorStop(0.5, '#00aa00');
+                gradient.addColorStop(1, '#007700');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.roundRect(x + padding, y + padding, size, size, [6]);
+                ctx.fill();
+                
+                // Borde
+                ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.roundRect(x + padding, y + padding, size, size, [6]);
+                ctx.stroke();
+            }
+        }
+
+        function drawApple(x, y) {
+            const centerX = x + box / 2;
+            const centerY = y + box / 2;
+            const radius = box / 2 - 2;
+            
+            // Cuerpo de la manzana
+            let gradient = ctx.createRadialGradient(centerX - 3, centerY - 3, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, '#ff4444');
+            gradient.addColorStop(0.6, '#cc0000');
+            gradient.addColorStop(1, '#990000');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Brillo
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.4)';
+            ctx.beginPath();
+            ctx.arc(centerX - 4, centerY - 4, radius / 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Tallo
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - radius);
+            ctx.lineTo(centerX, centerY - radius - 5);
+            ctx.stroke();
+            
+            // Hoja
+            ctx.fillStyle = '#22aa22';
+            ctx.beginPath();
+            ctx.ellipse(centerX + 3, centerY - radius - 3, 4, 3, -0.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
         function draw() {
-            ctx.fillStyle = '#000';
+            // Fondo
+            ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.strokeStyle = '#111';
+            // Grid sutil
+            ctx.strokeStyle = 'rgba(100, 100, 100, 0.1)';
             ctx.lineWidth = 0.5;
             for (let i = 0; i <= canvas.width; i += box) {
                 ctx.beginPath();
@@ -492,17 +570,18 @@
                 ctx.stroke();
             }
 
+            // Dibujar serpiente
             for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = i === 0 ? '#00ff00' : '#00aa00';
-                ctx.fillRect(snake[i].x * box + 1, snake[i].y * box + 1, box - 2, box - 2);
-                ctx.strokeStyle = '#00ff00';
-                ctx.strokeRect(snake[i].x * box, snake[i].y * box, box, box);
+                drawSnakeSegment(
+                    snake[i].x * box,
+                    snake[i].y * box,
+                    i === 0,
+                    currentDirection
+                );
             }
 
-            ctx.fillStyle = '#ff0000';
-            ctx.beginPath();
-            ctx.arc(food.x * box + box / 2, food.y * box + box / 2, box / 2 - 2, 0, Math.PI * 2);
-            ctx.fill();
+            // Dibujar manzana
+            drawApple(food.x * box, food.y * box);
         }
 
         function endGame(reason) {
@@ -511,7 +590,7 @@
 
             addScore(score);
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = '#ff0000';
@@ -557,8 +636,7 @@
                 
                 if (index === 0) {
                     medal = '🥇';
-                    positionClass = 'first';
-                const scoreItem = document.createElement('div');
+    const scoreItem = document.createElement('div');
                 scoreItem.className = 'score-item';
                 scoreItem.innerHTML = `
                     <span class="score-position ${positionClass}">${medal}</span>
@@ -583,7 +661,6 @@
 
         // Cargar scores al iniciar
         updateLeaderboard();
-        // Establecer dificultad inicial
         setDifficulty('normal');
     </script>
 </body>
