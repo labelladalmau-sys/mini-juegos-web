@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Juegos Web</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        .menu {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+        }
+
+        #game-area {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            min-height: 200px;
+        }
+
+        .target {
+            width: 60px;
+            height: 60px;
+            background: red;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 Mini Juegos Web</h1>
+
+    <div class="menu">
+        <button onclick="startClickGame()">Juego: Click Rápido</button>
+        <button onclick="clearGame()">Limpiar</button>
+    </div>
+
+    <div id="game-area">
+        <p>Selecciona un juego del menú</p>
+    </div>
+
+    <script>
+        function clearGame() {
+            const area = document.getElementById("game-area");
+            area.innerHTML = "<p>Selecciona un juego del menú</p>";
+        }
+
+        function startClickGame() {
+            const area = document.getElementById("game-area");
+            area.innerHTML = "<h2>Haz click en el círculo rojo</h2>";
+
+            const target = document.createElement("div");
+            target.classList.add("target");
+
+            moveTarget(target);
+            area.appendChild(target);
+
+            target.addEventListener("click", () => {
+                moveTarget(target);
+            });
+        }
+
+        function moveTarget(target) {
+            const area = document.getElementById("game-area");
+            const maxX = area.clientWidth - 60;
+            const maxY = area.clientHeight - 60;
+
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            target.style.left = x + "px";
+            target.style.top = y + "px";
+        }
+    </script>
+
+</body>
+</html>
