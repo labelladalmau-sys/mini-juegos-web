@@ -29,7 +29,7 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            max-width: 900px;
+            max-width: 1000px;
         }
 
         h1 {
@@ -75,6 +75,30 @@
             padding: 8px 15px;
             margin: 5px;
             font-size: 14px;
+        }
+
+        .grid-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .grid-buttons button {
+            padding: 8px 15px;
+            margin: 5px;
+            font-size: 14px;
+            background: #2196F3;
+        }
+
+        .grid-buttons button:hover {
+            background: #0b7dda;
+        }
+
+        .grid-buttons button.active {
+            background: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
         }
 
         .game-wrapper {
@@ -123,6 +147,26 @@
 
         .difficulty-info .difficulty-speed {
             color: #00ff00;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .grid-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .grid-info .grid-name {
+            font-weight: bold;
+            color: #2196F3;
+            font-size: 16px;
+        }
+
+        .grid-info .grid-size {
+            color: #87CEEB;
             font-size: 14px;
             margin-top: 5px;
         }
@@ -232,12 +276,27 @@
             <button onclick="clearGame()">🗑️ Limpiar</button>
         </div>
 
+        <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <h3 style="color: #2196F3; margin-bottom: 15px;">📏 Selecciona el tamaño de la cuadrícula:</h3>
+            <div class="grid-buttons">
+                <button onclick="setGridSize('small')" id="btnSmall">👶 Pequeño (20x20)</button>
+                <button onclick="setGridSize('medium')" id="btnMedium" class="active">👨 Medio (15x15)</button>
+                <button onclick="setGridSize('large')" id="btnLarge">👴 Grande (10x10)</button>
+                <button onclick="setGridSize('extreme')" id="btnExtremeGrid">🤯 Extremo (5x5)</button>
+            </div>
+        </div>
+
         <div class="game-wrapper">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <canvas id="gameCanvas" width="300" height="300"></canvas>
             
             <div class="right-panel">
                 <div id="score">📊 Puntuación: 0</div>
                 
+                <div class="grid-info">
+                    <div class="grid-name" id="gridName">Tamaño: MEDIO</div>
+                    <div class="grid-size" id="gridSize">Cuadrícula: 15x15</div>
+                </div>
+
                 <div class="difficulty-info">
                     <div class="difficulty-name" id="difficultyName">Dificultad: NORMAL</div>
                     <div class="difficulty-speed" id="difficultySpeed">Velocidad: 150ms</div>
@@ -247,7 +306,7 @@
                     <button onclick="setDifficulty('easy')" id="btnEasy">🐢 Fácil</button>
                     <button onclick="setDifficulty('normal')" id="btnNormal" class="active">⚡ Normal</button>
                     <button onclick="setDifficulty('hard')" id="btnHard">🔥 Difícil</button>
-                    <button onclick="setDifficulty('extreme')" id="btnExtreme">💀 Extremo</button>
+                    <button onclick="setDifficulty('extreme')" id="btnExtremeDiff">💀 Extremo</button>
                 </div>
 
                 <div class="slider-container visible">
@@ -273,7 +332,7 @@
         </div>
         
         <div class="instructions" id="instructions">
-            <p>👈 Haz clic en "Iniciar Juego" para empezar</p>
+            <p>👈 Selecciona el tamaño de la cuadrícula y haz clic en "Iniciar Juego"</p>
             <p>⬅️ Usa las flechas del teclado para moverte</p>
             <p>🍎 Come la manzana para ganar puntos</p>
             <p>⚡ Elige el nivel de dificultad antes de jugar</p>
@@ -282,7 +341,7 @@
     </div>
 
     <script>
-        // Función para dibujar rectángulos redondeados (compatible con todos los navegadores)
+        // Función para dibujar rectángulos redondeados
         function roundRect(ctx, x, y, width, height, radius) {
             ctx.beginPath();
             ctx.moveTo(x + radius, y);
@@ -301,7 +360,9 @@
         let gameRunning = false;
         let canvas = null;
         let ctx = null;
-        const box = 20;
+        let box = 20;
+        let gridCols = 15;
+        let gridRows = 15;
         let snake = [];
         let food = {};
         let score = 0;
@@ -314,6 +375,7 @@
         // Variables de velocidad
         let gameSpeed = 150;
         let currentDifficulty = 'normal';
+        let currentGridSize = 'medium';
 
         // Array de scores
         let topScores = JSON.parse(localStorage.getItem('snakeTopScores')) || [];
@@ -324,6 +386,14 @@
             normal: { speed: 150, name: 'NORMAL ⚡', color: '#FFD700' },
             hard: { speed: 100, name: 'DIFÍCIL 🔥', color: '#ff6b6b' },
             extreme: { speed: 50, name: 'EXTREMO 💀', color: '#ff00ff' }
+        };
+
+        // Configuración de tamaños de cuadrícula
+        const gridSizes = {
+            small: { cols: 20, rows: 20, name: 'PEQUEÑO 👶', color: '#87CEEB' },
+            medium: { cols: 15, rows: 15, name: 'MEDIO 👨', color: '#2196F3' },
+            large: { cols: 10, rows: 10, name: 'GRANDE 👴', color: '#FF6B6B' },
+            extreme: { cols: 5, rows: 5, name: 'EXTREMO 🤯', color: '#FF00FF' }
         };
 
         // Detectar teclas presionadas
@@ -358,6 +428,32 @@
             }
         });
 
+        function setGridSize(size) {
+            currentGridSize = size;
+            gridCols = gridSizes[size].cols;
+            gridRows = gridSizes[size].rows;
+            box = 300 / gridCols;
+
+            // Actualizar botones
+            document.getElementById('btnSmall').classList.remove('active');
+            document.getElementById('btnMedium').classList.remove('active');
+            document.getElementById('btnLarge').classList.remove('active');
+            document.getElementById('btnExtremeGrid').classList.remove('active');
+            
+            const btnId = 'btn' + size.charAt(0).toUpperCase() + size.slice(1);
+            document.getElementById(btnId).classList.add('active');
+            
+            // Actualizar info
+            document.getElementById('gridName').textContent = 'Tamaño: ' + gridSizes[size].name;
+            document.getElementById('gridSize').textContent = 'Cuadrícula: ' + gridCols + 'x' + gridRows;
+            document.getElementById('gridName').style.color = gridSizes[size].color;
+
+            // Si el juego está corriendo, reiniciar
+            if (gameRunning) {
+                startSnakeGame();
+            }
+        }
+
         function setDifficulty(difficulty) {
             currentDifficulty = difficulty;
             gameSpeed = difficulties[difficulty].speed;
@@ -365,7 +461,7 @@
             document.getElementById('btnEasy').classList.remove('active');
             document.getElementById('btnNormal').classList.remove('active');
             document.getElementById('btnHard').classList.remove('active');
-            document.getElementById('btnExtreme').classList.remove('active');
+            document.getElementById('btnExtremeDiff').classList.remove('active');
             
             const btnId = 'btn' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
             document.getElementById(btnId).classList.add('active');
@@ -388,7 +484,7 @@
             document.getElementById('btnEasy').classList.remove('active');
             document.getElementById('btnNormal').classList.remove('active');
             document.getElementById('btnHard').classList.remove('active');
-            document.getElementById('btnExtreme').classList.remove('active');
+            document.getElementById('btnExtremeDiff').classList.remove('active');
             
             if (gameRunning) {
                 if (gameInterval) clearInterval(gameInterval);
@@ -398,6 +494,8 @@
 
         function startSnakeGame() {
             canvas = document.getElementById('gameCanvas');
+            canvas.width = 300;
+            canvas.height = 300;
             ctx = canvas.getContext('2d');
             canvas.style.display = 'block';
             document.querySelector('.right-panel').style.display = 'block';
@@ -405,9 +503,9 @@
             document.getElementById('instructions').style.display = 'none';
 
             snake = [
-                { x: 10, y: 10 },
-                { x: 9, y: 10 },
-                { x: 8, y: 10 }
+                { x: Math.floor(gridCols / 2), y: Math.floor(gridRows / 2) },
+                { x: Math.floor(gridCols / 2) - 1, y: Math.floor(gridRows / 2) },
+                { x: Math.floor(gridCols / 2) - 2, y: Math.floor(gridRows / 2) }
             ];
             currentDirection = { x: 1, y: 0 };
             nextDirection = { x: 1, y: 0 };
@@ -428,8 +526,8 @@
             
             while (foodOnSnake) {
                 newFood = {
-                    x: Math.floor(Math.random() * (canvas.width / box)),
-                    y: Math.floor(Math.random() * (canvas.height / box))
+                    x: Math.floor(Math.random() * gridCols),
+                    y: Math.floor(Math.random() * gridRows)
                 };
                 
                 foodOnSnake = snake.some(segment => 
@@ -449,8 +547,8 @@
             head.x += currentDirection.x;
             head.y += currentDirection.y;
 
-            if (head.x < 0 || head.x >= canvas.width / box || 
-                head.y < 0 || head.y >= canvas.height / box) {
+            if (head.x < 0 || head.x >= gridCols || 
+                head.y < 0 || head.y >= gridRows) {
                 endGame('¡Chocaste con la pared!');
                 return;
             }
@@ -474,53 +572,48 @@
         }
 
         function drawSnakeSegment(x, y, isHead, direction) {
-            const padding = 2;
+            const padding = Math.max(1, box * 0.1);
             const size = box - padding * 2;
             
             if (isHead) {
-                // Dibujar cabeza más realista
                 ctx.fillStyle = '#00ff00';
-                roundRect(ctx, x + padding, y + padding, size, size, 4);
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, box * 0.3));
                 ctx.fill();
                 
-                // Sombra para profundidad
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-                roundRect(ctx, x + padding + 2, y + padding + 2, size - 4, size - 4, 3);
+                roundRect(ctx, x + padding + 1, y + padding + 1, size - 2, size - 2, Math.max(1, box * 0.2));
                 ctx.fill();
                 
-                // Ojos según dirección
                 ctx.fillStyle = '#000';
-                const eyeSize = 3;
-                const eyeOffset = 5;
+                const eyeSize = Math.max(1, box * 0.15);
+                const eyeOffset = box * 0.25;
                 
-                if (direction.x === 1) { // Derecha
-                    ctx.fillRect(x + eyeOffset + 3, y + eyeOffset, eyeSize, eyeSize);
-                    ctx.fillRect(x + eyeOffset + 3, y + eyeOffset + 8, eyeSize, eyeSize);
-                } else if (direction.x === -1) { // Izquierda
+                if (direction.x === 1) {
+                    ctx.fillRect(x + eyeOffset + 2, y + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + 2, y + eyeOffset + box * 0.4, eyeSize, eyeSize);
+                } else if (direction.x === -1) {
                     ctx.fillRect(x + padding + 1, y + eyeOffset, eyeSize, eyeSize);
-                    ctx.fillRect(x + padding + 1, y + eyeOffset + 8, eyeSize, eyeSize);
-                } else if (direction.y === -1) { // Arriba
+                    ctx.fillRect(x + padding + 1, y + eyeOffset + box * 0.4, eyeSize, eyeSize);
+                } else if (direction.y === -1) {
                     ctx.fillRect(x + eyeOffset, y + padding + 1, eyeSize, eyeSize);
-                    ctx.fillRect(x + eyeOffset + 8, y + padding + 1, eyeSize, eyeSize);
-                } else if (direction.y === 1) { // Abajo
-                    ctx.fillRect(x + eyeOffset, y + eyeOffset + 3, eyeSize, eyeSize);
-                    ctx.fillRect(x + eyeOffset + 8, y + eyeOffset + 3, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + box * 0.4, y + padding + 1, eyeSize, eyeSize);
+                } else if (direction.y === 1) {
+                    ctx.fillRect(x + eyeOffset, y + eyeOffset + 2, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + box * 0.4, y + eyeOffset + 2, eyeSize, eyeSize);
                 }
             } else {
-                // Cuerpo con gradiente
                 let gradient = ctx.createLinearGradient(x, y, x + box, y + box);
                 gradient.addColorStop(0, '#00dd00');
                 gradient.addColorStop(0.5, '#00aa00');
                 gradient.addColorStop(1, '#007700');
                 
                 ctx.fillStyle = gradient;
-                roundRect(ctx, x + padding, y + padding, size, size, 3);
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, box * 0.25));
                 ctx.fill();
                 
-                // Borde
                 ctx.strokeStyle = '#00ff00';
-                ctx.lineWidth = 1;
-                roundRect(ctx, x + padding, y + padding, size, size, 3);
+                ctx.lineWidth = Math.max(0.5, box * 0.05);
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, box * 0.25));
                 ctx.stroke();
             }
         }
@@ -528,10 +621,9 @@
         function drawApple(x, y) {
             const centerX = x + box / 2;
             const centerY = y + box / 2;
-            const radius = box / 2 - 2;
+            const radius = box / 2 - 1;
             
-            // Cuerpo de la manzana
-            let gradient = ctx.createRadialGradient(centerX - 3, centerY - 3, 0, centerX, centerY, radius);
+            let gradient = ctx.createRadialGradient(centerX - 2, centerY - 2, 0, centerX, centerY, radius);
             gradient.addColorStop(0, '#ff4444');
             gradient.addColorStop(0.6, '#cc0000');
             gradient.addColorStop(1, '#990000');
@@ -541,48 +633,43 @@
             ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
             ctx.fill();
             
-            // Brillo
             ctx.fillStyle = 'rgba(255, 100, 100, 0.4)';
             ctx.beginPath();
-            ctx.arc(centerX - 4, centerY - 4, radius / 2, 0, Math.PI * 2);
+            ctx.arc(centerX - 2, centerY - 2, radius / 2, 0, Math.PI * 2);
             ctx.fill();
             
-            // Tallo
             ctx.strokeStyle = '#8B4513';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = Math.max(1, box * 0.1);
             ctx.beginPath();
             ctx.moveTo(centerX, centerY - radius);
-            ctx.lineTo(centerX, centerY - radius - 5);
+            ctx.lineTo(centerX, centerY - radius - 3);
             ctx.stroke();
             
-            // Hoja
             ctx.fillStyle = '#22aa22';
             ctx.beginPath();
-            ctx.ellipse(centerX + 3, centerY - radius - 3, 4, 3, -0.5, 0, Math.PI * 2);
+            ctx.ellipse(centerX + 2, centerY - radius - 2, 2, 2, -0.5, 0, Math.PI * 2);
             ctx.fill();
         }
 
         function draw() {
-            // Fondo
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grid sutil
             ctx.strokeStyle = 'rgba(100, 100, 100, 0.1)';
             ctx.lineWidth = 0.5;
-            for (let i = 0; i <= canvas.width; i += box) {
+            for (let i = 0; i <= gridCols; i++) {
                 ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
+                ctx.moveTo(i * box, 0);
+                ctx.lineTo(i * box, canvas.height);
                 ctx.stroke();
-
+            }
+            for (let i = 0; i <= gridRows; i++) {
                 ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
+                ctx.moveTo(0, i * box);
+                ctx.lineTo(canvas.width, i * box);
                 ctx.stroke();
             }
 
-            // Dibujar serpiente
             for (let i = 0; i < snake.length; i++) {
                 drawSnakeSegment(
                     snake[i].x * box,
@@ -592,7 +679,6 @@
                 );
             }
 
-            // Dibujar manzana
             drawApple(food.x * box, food.y * box);
         }
 
@@ -606,24 +692,25 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = '#ff0000';
-            ctx.font = 'bold 40px Arial';
+            ctx.font = 'bold 30px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
+            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
 
             ctx.fillStyle = '#ffff00';
-            ctx.font = 'bold 16px Arial';
+            ctx.font = 'bold 12px Arial';
             ctx.fillText(reason, canvas.width / 2, canvas.height / 2);
 
             ctx.fillStyle = '#00ff00';
-            ctx.font = 'bold 25px Arial';
-            ctx.fillText('Puntuación: ' + score, canvas.width / 2, canvas.height / 2 + 50);
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('Puntuación: ' + score, canvas.width / 2, canvas.height / 2 + 40);
         }
 
         function addScore(newScore) {
             topScores.push({
                 score: newScore,
                 date: new Date().toLocaleDateString(),
-                difficulty: currentDifficulty
+                difficulty: currentDifficulty,
+                gridSize: currentGridSize
             });
 
             topScores.sort((a, b) => b.score - a.score);
@@ -684,6 +771,7 @@
 
         // Cargar scores al iniciar
         updateLeaderboard();
+        setGridSize('medium');
         setDifficulty('normal');
     </script>
 </body>
