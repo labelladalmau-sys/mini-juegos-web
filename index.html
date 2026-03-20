@@ -13,7 +13,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -58,6 +58,25 @@
             transform: scale(1.05);
         }
 
+        button.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .difficulty-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-buttons button {
+            padding: 8px 15px;
+            margin: 5px;
+            font-size: 14px;
+        }
+
         .game-wrapper {
             display: flex;
             gap: 30px;
@@ -85,6 +104,26 @@
             font-size: 1.5em;
             font-weight: bold;
             color: #00ff00;
+        }
+
+        .difficulty-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .difficulty-info .difficulty-name {
+            font-weight: bold;
+            color: #FFD700;
+            font-size: 16px;
+        }
+
+        .difficulty-info .difficulty-speed {
+            color: #00ff00;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .leaderboard {
@@ -147,6 +186,52 @@
             font-size: 12px;
             display: none;
         }
+
+        .slider-container {
+            display: none;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .slider-container.visible {
+            display: block;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -163,6 +248,28 @@
             
             <div class="right-panel">
                 <div id="score">📊 Puntuación: 0</div>
+                
+                <div class="difficulty-info">
+                    <div class="difficulty-name" id="difficultyName">Dificultad: NORMAL</div>
+                    <div class="difficulty-speed" id="difficultySpeed">Velocidad: 150ms</div>
+                </div>
+
+                <div class="difficulty-buttons">
+                    <button onclick="setDifficulty('easy')" id="btnEasy">🐢 Fácil</button>
+                    <button onclick="setDifficulty('normal')" id="btnNormal" class="active">⚡ Normal</button>
+                    <button onclick="setDifficulty('hard')" id="btnHard">🔥 Difícil</button>
+                    <button onclick="setDifficulty('extreme')" id="btnExtreme">💀 Extremo</button>
+                </div>
+
+                <div class="slider-container visible">
+                    <label for="speedSlider">Ajusta la velocidad:</label>
+                    <input type="range" id="speedSlider" min="50" max="250" value="150" step="10" 
+                           oninput="setCustomSpeed(this.value)">
+                    <div id="speedValue" style="margin-top: 10px; font-size: 12px; color: #FFD700;">
+                        Velocidad: 150ms (más bajo = más rápido)
+                    </div>
+                </div>
+
                 <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡️ ⬇️</div>
                 
                 <div class="leaderboard">
@@ -180,6 +287,7 @@
             <p>👈 Haz clic en "Iniciar Juego" para empezar</p>
             <p>⬅️ Usa las flechas del teclado para moverte</p>
             <p>🍎 Come el punto rojo para ganar puntos</p>
+            <p>⚡ Elige el nivel de dificultad antes de jugar</p>
             <p><strong>¡Evita los bordes y no chokes contigo misma!</strong></p>
         </div>
     </div>
@@ -199,8 +307,20 @@
         let currentDirection = { x: 1, y: 0 };
         let nextDirection = { x: 1, y: 0 };
 
-        // Array de scores (máximo 10)
+        // Variables de velocidad
+        let gameSpeed = 150;  // En milisegundos
+        let currentDifficulty = 'normal';
+
+        // Array de scores
         let topScores = JSON.parse(localStorage.getItem('snakeTopScores')) || [];
+
+        // Configuración de dificultades
+        const difficulties = {
+            easy: { speed: 200, name: 'FÁCIL 🐢', color: '#00ff00' },
+            normal: { speed: 150, name: 'NORMAL ⚡', color: '#FFD700' },
+            hard: { speed: 100, name: 'DIFÍCIL 🔥', color: '#ff6b6b' },
+            extreme: { speed: 50, name: 'EXTREMO 💀', color: '#ff00ff' }
+        };
 
         // Detectar teclas presionadas
         window.addEventListener('keydown', function(e) {
@@ -234,6 +354,48 @@
             }
         });
 
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            gameSpeed = difficulties[difficulty].speed;
+            
+            // Actualizar botones
+            document.getElementById('btnEasy').classList.remove('active');
+            document.getElementById('btnNormal').classList.remove('active');
+            document.getElementById('btnHard').classList.remove('active');
+            document.getElementById('btnExtreme').classList.remove('active');
+            
+            document.getElementById('btn' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1)).classList.add('active');
+            
+            // Actualizar info
+            document.getElementById('difficultyName').textContent = 'Dificultad: ' + difficulties[difficulty].name;
+            document.getElementById('difficultySpeed').textContent = 'Velocidad: ' + gameSpeed + 'ms';
+            document.getElementById('difficultyName').style.color = difficulties[difficulty].color;
+            
+            // Si el juego está corriendo, reiniciar con nueva velocidad
+            if (gameRunning) {
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(gameLoop, gameSpeed);
+            }
+        }
+
+        function setCustomSpeed(speed) {
+            gameSpeed = parseInt(speed);
+            document.getElementById('speedValue').textContent = 'Velocidad: ' + gameSpeed + 'ms (más bajo = más rápido)';
+            currentDifficulty = 'custom';
+            
+            // Actualizar botones
+            document.getElementById('btnEasy').classList.remove('active');
+            document.getElementById('btnNormal').classList.remove('active');
+            document.getElementById('btnHard').classList.remove('active');
+            document.getElementById('btnExtreme').classList.remove('active');
+            
+            // Si el juego está corriendo, reiniciar con nueva velocidad
+            if (gameRunning) {
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(gameLoop, gameSpeed);
+            }
+        }
+
         function startSnakeGame() {
             canvas = document.getElementById('gameCanvas');
             ctx = canvas.getContext('2d');
@@ -256,7 +418,7 @@
             generateFood();
 
             if (gameInterval) clearInterval(gameInterval);
-            gameInterval = setInterval(gameLoop, 150);
+            gameInterval = setInterval(gameLoop, gameSpeed);
             
             canvas.focus();
         }
@@ -347,7 +509,6 @@
             gameRunning = false;
             if (gameInterval) clearInterval(gameInterval);
 
-            // Guardar score
             addScore(score);
 
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -370,19 +531,14 @@
         function addScore(newScore) {
             topScores.push({
                 score: newScore,
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                difficulty: currentDifficulty
             });
 
-            // Ordenar de mayor a menor
             topScores.sort((a, b) => b.score - a.score);
-
-            // Mantener solo los top 10
             topScores = topScores.slice(0, 10);
 
-            // Guardar en localStorage
             localStorage.setItem('snakeTopScores', JSON.stringify(topScores));
-
-            // Actualizar la tabla
             updateLeaderboard();
         }
 
@@ -410,7 +566,6 @@
                     positionClass = 'third';
                 } else {
                     medal = `#${index + 1}`;
-                    positionClass = '';
                 }
 
                 const scoreItem = document.createElement('div');
@@ -418,7 +573,7 @@
                 scoreItem.innerHTML = `
                     <span class="score-position ${positionClass}">${medal}</span>
                     <span>${item.score} pts</span>
-                    <span style="font-size: 12px; color: #aaa;">${item.date}</span>
+                    <span style="font-size: 11px; color: #aaa;">${item.date}</span>
                 `;
                 leaderboardList.appendChild(scoreItem);
             });
@@ -438,6 +593,8 @@
 
         // Cargar scores al iniciar
         updateLeaderboard();
+        // Establecer dificultad inicial
+        setDifficulty('normal');
     </script>
 </body>
 </html>
