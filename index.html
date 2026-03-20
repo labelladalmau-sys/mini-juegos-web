@@ -29,7 +29,7 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            max-width: 1000px;
+            max-width: 900px;
         }
 
         h1 {
@@ -63,49 +63,12 @@
             box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
         }
 
-        .difficulty-buttons {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .difficulty-buttons button {
-            padding: 8px 15px;
-            margin: 5px;
-            font-size: 14px;
-        }
-
-        .grid-buttons {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .grid-buttons button {
-            padding: 8px 15px;
-            margin: 5px;
-            font-size: 14px;
-            background: #2196F3;
-        }
-
-        .grid-buttons button:hover {
-            background: #0b7dda;
-        }
-
-        .grid-buttons button.active {
-            background: #ff9800;
-            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
-        }
-
         .game-wrapper {
             display: flex;
             gap: 30px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
         #gameCanvas {
@@ -114,6 +77,8 @@
             display: none;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5);
             border-radius: 10px;
+            width: 400px;
+            height: 400px;
         }
 
         .right-panel {
@@ -131,52 +96,91 @@
             color: #00ff00;
         }
 
-        .difficulty-info {
+        .controls-section {
             background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 14px;
+            text-align: left;
         }
 
-        .difficulty-info .difficulty-name {
-            font-weight: bold;
-            color: #FFD700;
-            font-size: 16px;
-        }
-
-        .difficulty-info .difficulty-speed {
-            color: #00ff00;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .grid-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .grid-info .grid-name {
-            font-weight: bold;
+        .controls-section h4 {
             color: #2196F3;
-            font-size: 16px;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        .grid-info .grid-size {
+        .difficulty-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-buttons button {
+            padding: 6px 12px;
+            margin: 3px;
+            font-size: 12px;
+        }
+
+        .grid-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .grid-buttons button {
+            padding: 6px 12px;
+            margin: 3px;
+            font-size: 12px;
+            background: #2196F3;
+        }
+
+        .grid-buttons button:hover {
+            background: #0b7dda;
+        }
+
+        .grid-buttons button.active {
+            background: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        .info-display {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .info-value {
             color: #87CEEB;
-            font-size: 14px;
-            margin-top: 5px;
         }
 
         .leaderboard {
-            text-align: left;
             background: rgba(0, 0, 0, 0.7);
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
+            text-align: left;
         }
 
         .leaderboard h3 {
@@ -184,6 +188,7 @@
             margin-bottom: 10px;
             border-bottom: 2px solid #FFD700;
             padding-bottom: 10px;
+            text-align: center;
         }
 
         .score-item {
@@ -193,7 +198,7 @@
             margin: 5px 0;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .score-position {
@@ -212,20 +217,21 @@
         }
 
         #debug {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 10px;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 5px;
             font-size: 12px;
             display: none;
+            text-align: center;
         }
 
         .slider-container {
             display: none;
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
+            margin-top: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .slider-container.visible {
@@ -234,13 +240,14 @@
 
         .slider-container label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-align: center;
         }
 
         input[type="range"] {
             width: 100%;
-            height: 6px;
+            height: 5px;
             border-radius: 3px;
             background: #ddd;
             outline: none;
@@ -250,20 +257,27 @@
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
             border: none;
+        }
+
+        #speedValue {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #FFD700;
+            text-align: center;
         }
     </style>
 </head>
@@ -276,52 +290,53 @@
             <button onclick="clearGame()">🗑️ Limpiar</button>
         </div>
 
-        <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-            <h3 style="color: #2196F3; margin-bottom: 15px;">📏 Selecciona el tamaño de la cuadrícula:</h3>
-            <div class="grid-buttons">
-                <button onclick="setGridSize('small')" id="btnSmall">👶 Pequeño (20x20)</button>
-                <button onclick="setGridSize('medium')" id="btnMedium" class="active">👨 Medio (15x15)</button>
-                <button onclick="setGridSize('large')" id="btnLarge">👴 Grande (10x10)</button>
-                <button onclick="setGridSize('extreme')" id="btnExtremeGrid">🤯 Extremo (5x5)</button>
-            </div>
-        </div>
-
         <div class="game-wrapper">
-            <canvas id="gameCanvas" width="300" height="300"></canvas>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
             
             <div class="right-panel">
                 <div id="score">📊 Puntuación: 0</div>
-                
-                <div class="grid-info">
-                    <div class="grid-name" id="gridName">Tamaño: MEDIO</div>
-                    <div class="grid-size" id="gridSize">Cuadrícula: 15x15</div>
+
+                <div class="controls-section">
+                    <h4>⚡ Dificultad</h4>
+                    <div class="difficulty-buttons">
+                        <button onclick="setDifficulty('easy')" id="btnEasy">🐢 Fácil</button>
+                        <button onclick="setDifficulty('normal')" id="btnNormal" class="active">⚡ Normal</button>
+                        <button onclick="setDifficulty('hard')" id="btnHard">🔥 Difícil</button>
+                        <button onclick="setDifficulty('extreme')" id="btnExtremeDiff">💀 Extremo</button>
+                    </div>
+
+                    <div class="slider-container visible">
+                        <label for="speedSlider">Velocidad:</label>
+                        <input type="range" id="speedSlider" min="50" max="250" value="150" step="10" 
+                               oninput="setCustomSpeed(this.value)">
+                        <div id="speedValue">150ms</div>
+                    </div>
                 </div>
 
-                <div class="difficulty-info">
-                    <div class="difficulty-name" id="difficultyName">Dificultad: NORMAL</div>
-                    <div class="difficulty-speed" id="difficultySpeed">Velocidad: 150ms</div>
+                <div class="controls-section">
+                    <h4>📏 Cuadrícula</h4>
+                    <div class="grid-buttons">
+                        <button onclick="setGridSize('large')" id="btnLarge">🟫 Grande</button>
+                        <button onclick="setGridSize('medium')" id="btnMedium" class="active">🟩 Medio</button>
+                        <button onclick="setGridSize('small')" id="btnSmall">🟪 Pequeño</button>
+                    </div>
                 </div>
 
-                <div class="difficulty-buttons">
-                    <button onclick="setDifficulty('easy')" id="btnEasy">🐢 Fácil</button>
-                    <button onclick="setDifficulty('normal')" id="btnNormal" class="active">⚡ Normal</button>
-                    <button onclick="setDifficulty('hard')" id="btnHard">🔥 Difícil</button>
-                    <button onclick="setDifficulty('extreme')" id="btnExtremeDiff">💀 Extremo</button>
-                </div>
-
-                <div class="slider-container visible">
-                    <label for="speedSlider">Ajusta la velocidad:</label>
-                    <input type="range" id="speedSlider" min="50" max="250" value="150" step="10" 
-                           oninput="setCustomSpeed(this.value)">
-                    <div id="speedValue" style="margin-top: 10px; font-size: 12px; color: #FFD700;">
-                        Velocidad: 150ms (más bajo = más rápido)
+                <div class="info-display">
+                    <div class="info-row">
+                        <span class="info-label">Dificultad:</span>
+                        <span class="info-value" id="infoSpeed">150ms</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cuadrícula:</span>
+                        <span class="info-value" id="infoGrid">15x15</span>
                     </div>
                 </div>
 
                 <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡️ ⬇️</div>
                 
                 <div class="leaderboard">
-                    <h3>🏆 Top 10 Scores</h3>
+                    <h3>🏆 Top 10</h3>
                     <div id="leaderboardList">
                         <div class="score-item">
                             <span>Juega para obtener puntuaciones</span>
@@ -332,10 +347,9 @@
         </div>
         
         <div class="instructions" id="instructions">
-            <p>👈 Selecciona el tamaño de la cuadrícula y haz clic en "Iniciar Juego"</p>
+            <p>👈 Selecciona la dificultad y tamaño de cuadrícula</p>
             <p>⬅️ Usa las flechas del teclado para moverte</p>
             <p>🍎 Come la manzana para ganar puntos</p>
-            <p>⚡ Elige el nivel de dificultad antes de jugar</p>
             <p><strong>¡Evita los bordes y no chokes contigo misma!</strong></p>
         </div>
     </div>
@@ -361,8 +375,7 @@
         let canvas = null;
         let ctx = null;
         let box = 20;
-        let gridCols = 15;
-        let gridRows = 15;
+        let gridSize = 15;
         let snake = [];
         let food = {};
         let score = 0;
@@ -382,18 +395,17 @@
 
         // Configuración de dificultades
         const difficulties = {
-            easy: { speed: 200, name: 'FÁCIL 🐢', color: '#00ff00' },
-            normal: { speed: 150, name: 'NORMAL ⚡', color: '#FFD700' },
-            hard: { speed: 100, name: 'DIFÍCIL 🔥', color: '#ff6b6b' },
-            extreme: { speed: 50, name: 'EXTREMO 💀', color: '#ff00ff' }
+            easy: { speed: 200, name: 'FÁCIL 🐢' },
+            normal: { speed: 150, name: 'NORMAL ⚡' },
+            hard: { speed: 100, name: 'DIFÍCIL 🔥' },
+            extreme: { speed: 50, name: 'EXTREMO 💀' }
         };
 
-        // Configuración de tamaños de cuadrícula
+        // Configuración de tamaños de cuadrícula (número de celdas)
         const gridSizes = {
-            small: { cols: 20, rows: 20, name: 'PEQUEÑO 👶', color: '#87CEEB' },
-            medium: { cols: 15, rows: 15, name: 'MEDIO 👨', color: '#2196F3' },
-            large: { cols: 10, rows: 10, name: 'GRANDE 👴', color: '#FF6B6B' },
-            extreme: { cols: 5, rows: 5, name: 'EXTREMO 🤯', color: '#FF00FF' }
+            large: { size: 10, name: 'GRANDE' },
+            medium: { size: 15, name: 'MEDIO' },
+            small: { size: 20, name: 'PEQUEÑO' }
         };
 
         // Detectar teclas presionadas
@@ -430,23 +442,19 @@
 
         function setGridSize(size) {
             currentGridSize = size;
-            gridCols = gridSizes[size].cols;
-            gridRows = gridSizes[size].rows;
-            box = 300 / gridCols;
+            gridSize = gridSizes[size].size;
+            box = 400 / gridSize;
 
             // Actualizar botones
-            document.getElementById('btnSmall').classList.remove('active');
-            document.getElementById('btnMedium').classList.remove('active');
             document.getElementById('btnLarge').classList.remove('active');
-            document.getElementById('btnExtremeGrid').classList.remove('active');
+            document.getElementById('btnMedium').classList.remove('active');
+            document.getElementById('btnSmall').classList.remove('active');
             
             const btnId = 'btn' + size.charAt(0).toUpperCase() + size.slice(1);
             document.getElementById(btnId).classList.add('active');
             
             // Actualizar info
-            document.getElementById('gridName').textContent = 'Tamaño: ' + gridSizes[size].name;
-            document.getElementById('gridSize').textContent = 'Cuadrícula: ' + gridCols + 'x' + gridRows;
-            document.getElementById('gridName').style.color = gridSizes[size].color;
+            document.getElementById('infoGrid').textContent = gridSize + 'x' + gridSize;
 
             // Si el juego está corriendo, reiniciar
             if (gameRunning) {
@@ -466,9 +474,9 @@
             const btnId = 'btn' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
             document.getElementById(btnId).classList.add('active');
             
-            document.getElementById('difficultyName').textContent = 'Dificultad: ' + difficulties[difficulty].name;
-            document.getElementById('difficultySpeed').textContent = 'Velocidad: ' + gameSpeed + 'ms';
-            document.getElementById('difficultyName').style.color = difficulties[difficulty].color;
+            document.getElementById('infoSpeed').textContent = gameSpeed + 'ms';
+            document.getElementById('speedSlider').value = gameSpeed;
+            document.getElementById('speedValue').textContent = gameSpeed + 'ms';
             
             if (gameRunning) {
                 if (gameInterval) clearInterval(gameInterval);
@@ -478,7 +486,8 @@
 
         function setCustomSpeed(speed) {
             gameSpeed = parseInt(speed);
-            document.getElementById('speedValue').textContent = 'Velocidad: ' + gameSpeed + 'ms (más bajo = más rápido)';
+            document.getElementById('speedValue').textContent = gameSpeed + 'ms';
+            document.getElementById('infoSpeed').textContent = gameSpeed + 'ms';
             currentDifficulty = 'custom';
             
             document.getElementById('btnEasy').classList.remove('active');
@@ -494,18 +503,17 @@
 
         function startSnakeGame() {
             canvas = document.getElementById('gameCanvas');
-            canvas.width = 300;
-            canvas.height = 300;
             ctx = canvas.getContext('2d');
             canvas.style.display = 'block';
             document.querySelector('.right-panel').style.display = 'block';
             document.getElementById('debug').style.display = 'block';
             document.getElementById('instructions').style.display = 'none';
 
+            const centerGrid = Math.floor(gridSize / 2);
             snake = [
-                { x: Math.floor(gridCols / 2), y: Math.floor(gridRows / 2) },
-                { x: Math.floor(gridCols / 2) - 1, y: Math.floor(gridRows / 2) },
-                { x: Math.floor(gridCols / 2) - 2, y: Math.floor(gridRows / 2) }
+                { x: centerGrid, y: centerGrid },
+                { x: centerGrid - 1, y: centerGrid },
+                { x: centerGrid - 2, y: centerGrid }
             ];
             currentDirection = { x: 1, y: 0 };
             nextDirection = { x: 1, y: 0 };
@@ -526,8 +534,8 @@
             
             while (foodOnSnake) {
                 newFood = {
-                    x: Math.floor(Math.random() * gridCols),
-                    y: Math.floor(Math.random() * gridRows)
+                    x: Math.floor(Math.random() * gridSize),
+                    y: Math.floor(Math.random() * gridSize)
                 };
                 
                 foodOnSnake = snake.some(segment => 
@@ -547,8 +555,8 @@
             head.x += currentDirection.x;
             head.y += currentDirection.y;
 
-            if (head.x < 0 || head.x >= gridCols || 
-                head.y < 0 || head.y >= gridRows) {
+            if (head.x < 0 || head.x >= gridSize || 
+                head.y < 0 || head.y >= gridSize) {
                 endGame('¡Chocaste con la pared!');
                 return;
             }
@@ -647,7 +655,7 @@
             
             ctx.fillStyle = '#22aa22';
             ctx.beginPath();
-            ctx.ellipse(centerX + 2, centerY - radius - 2, 2, 2, -0.5, 0, Math.PI * 2);
+            ctx.arc(centerX + 2, centerY - radius - 2, 2, 0, Math.PI * 2);
             ctx.fill();
         }
 
@@ -657,13 +665,13 @@
 
             ctx.strokeStyle = 'rgba(100, 100, 100, 0.1)';
             ctx.lineWidth = 0.5;
-            for (let i = 0; i <= gridCols; i++) {
+            for (let i = 0; i <= gridSize; i++) {
                 ctx.beginPath();
                 ctx.moveTo(i * box, 0);
                 ctx.lineTo(i * box, canvas.height);
                 ctx.stroke();
             }
-            for (let i = 0; i <= gridRows; i++) {
+            for (let i = 0; i <= gridSize; i++) {
                 ctx.beginPath();
                 ctx.moveTo(0, i * box);
                 ctx.lineTo(canvas.width, i * box);
@@ -697,11 +705,11 @@
             ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
 
             ctx.fillStyle = '#ffff00';
-            ctx.font = 'bold 12px Arial';
+            ctx.font = 'bold 14px Arial';
             ctx.fillText(reason, canvas.width / 2, canvas.height / 2);
 
             ctx.fillStyle = '#00ff00';
-            ctx.font = 'bold 20px Arial';
+            ctx.font = 'bold 24px Arial';
             ctx.fillText('Puntuación: ' + score, canvas.width / 2, canvas.height / 2 + 40);
         }
 
@@ -735,13 +743,10 @@
                 
                 if (index === 0) {
                     medal = '🥇';
-                    positionClass = 'first';
                 } else if (index === 1) {
                     medal = '🥈';
-                    positionClass = 'second';
                 } else if (index === 2) {
                     medal = '🥉';
-                    positionClass = 'third';
                 } else {
                     medal = `#${index + 1}`;
                 }
@@ -749,9 +754,8 @@
                 const scoreItem = document.createElement('div');
                 scoreItem.className = 'score-item';
                 scoreItem.innerHTML = `
-                    <span class="score-position ${positionClass}">${medal}</span>
+                    <span class="score-position">${medal}</span>
                     <span>${item.score} pts</span>
-                    <span style="font-size: 11px; color: #aaa;">${item.date}</span>
                 `;
                 leaderboardList.appendChild(scoreItem);
             });
