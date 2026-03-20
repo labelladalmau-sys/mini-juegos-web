@@ -558,16 +558,6 @@
                 if (index === 0) {
                     medal = '🥇';
                     positionClass = 'first';
-                } else if (index === 1) {
-                    medal = '🥈';
-                    positionClass = 'second';
-                } else if (index === 2) {
-                    medal = '🥉';
-                    positionClass = 'third';
-                } else {
-                    medal = `#${index + 1}`;
-                }
-
                 const scoreItem = document.createElement('div');
                 scoreItem.className = 'score-item';
                 scoreItem.innerHTML = `
