@@ -409,6 +409,7 @@
         <div class="game-selector">
             <button onclick="selectGame('snake')" id="btnSnakeGame" class="active">🐍 Snake</button>
             <button onclick="selectGame('mario')" id="btnMarioGame">🍄 Mario Bros</button>
+            <button onclick="selectGame('palabra')" id="btnPalabraGame">🔤 Palabra del Día</button>
         </div>
 
         <!-- MENÚS DE INICIO -->
@@ -421,7 +422,18 @@
             <button onclick="startMarioGame()">🎮 Iniciar Juego</button>
             <button onclick="clearGame()">🗑️ Limpiar</button>
         </div>
+<div class="menu" id="palabraMenu" style="display: none;">
+    <button onclick="startPalabraGame()">Iniciar Palabra del Día</button>
+    <button onclick="clearGame()">🗑️ Limpiar</button>
+</div>
 
+<div id="palabraPanel" style="display: none; margin:20px 0;">
+    <div style="margin-bottom:16px;font-size:2em;letter-spacing:18px;" id="palabraSecret"></div>
+    <div id="palabraABC" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;"></div>
+    <div style="margin-top:16px;">
+        <span id="palabraStatus"></span>
+    </div>
+</div>
         <!-- CANVAS Y PANEL DERECHO -->
         <div class="game-wrapper">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
@@ -614,42 +626,150 @@
             document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="girl.png" style="height:16px;vertical-align:middle;"> Chica';
         }
     }
+        /// ===== PALABRA DEL DÍA VARIABLES ======
+const palabrasDelDia = [
+  "CASA","MESA","PERRO","GATO","COCHE","CALLE","LUNES","MARTES","JUEVES","VIERNES",
+  "NUNCA","SIEMPRE","DONDE","CUANTO","PORQUE","CUANDO","MIENTRAS","SOBRE","CONTRA","HASTA",
+  "VENTANA","CAMINO","PERSONA","FAMILIA","COMIDA","ESCUELA","TRABAJO","PROBLEMA","EJEMPLO","MOMENTO",
+  "HISTORIA","MANANA","PASADO","FUTURO","PALABRA","PREGUNTA","RESPUESTA","CIUDAD","MUNDO","CULTURA",
+  "RESPONSABLE","DESARROLLO","ARQUITECTURA","ELECTRICIDAD","TECNOLOGIA","ASTRONOMIA","GEOGRAFIA","BIOLOGIA","FILOSOFIA",
+  "BIODIVERSIDAD","INFRAESTRUCTURA","JURISPRUDENCIA","PROCEDIMIENTO","ESTABLECIMIENTO","ALGORITMO","PARADIGMA","SINTAXIS","FONETICA",
+  "MORFOLOGIA","SEMANTICA","LITURGIA","CATACLISMO","FILANTROPO","MONARQUIA","LITOGRAFIA","METALURGIA","CRIPTOGRAFIA",
+  "TOPOGRAFIA","MICROBIOLOGIA","FISIOLOGIA","PALEONTOLOGIA","CARTOGRAFIA","PLANETA","SISTEMA","ENERGIA","MATERIA","PROCESO",
+  "ESTRUCTURA","MODELO","FUNCION","METODO","RECURSO","ENTORNO","REGION","IDIOMA","NIVEL",
+  "FORMA","OBJETO","CAMPO","BASE","GRUPO","PUNTO","VALOR","NUMERO","FIGURA",
+  "PARTE","TIPO","NORMA","REGLA","SERIE","CICLO","MOTOR","SUELO","CLIMA","BOSQUE"
+];
+let palabraSecreta = "";
+let palabraAdivinada = [];
+let intentosPalabra = 0;
+let letrasUsadas = [];
+let palabraJuegoActivo = false;
 
+// ===== LÓGICA PALABRA DEL DÍA ======
+function startPalabraGame() {
+    // Selecciona palabra
+    palabraSecreta = palabrasDelDia[Math.floor(Math.random() * palabrasDelDia.length)];
+    palabraAdivinada = Array(palabraSecreta.length).fill("_");
+    intentosPalabra = 0;
+    letrasUsadas = [];
+    palabraJuegoActivo = true;
+
+    // UI
+    document.getElementById('palabraPanel').style.display = 'block';
+    document.getElementById('palabraMenu').style.display = 'flex';
+    document.getElementById('snakeMenu').style.display = 'none';
+    document.getElementById('marioMenu').style.display = 'none';
+    document.getElementById('palabraStatus').textContent = `Te quedan 5 intentos.`;
+    renderPalabra();
+    renderAbecedario();
+
+    // Oculta otros paneles/canvas
+    document.querySelector('.right-panel').style.display = 'none';
+    document.getElementById('gameCanvas').style.display = 'none';
+    document.getElementById('marioCanvas').style.display = 'none';
+    document.getElementById('instructions').style.display = 'none';
+    document.getElementById('marioInstructions').style.display = 'none';
+}
+
+function renderPalabra() {
+    // Mostrar palabra con espacios
+    document.getElementById('palabraSecret').textContent = palabraAdivinada.join(" ");
+}
+function renderAbecedario() {
+    const abc = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+    const cont = document.getElementById('palabraABC');
+    cont.innerHTML = "";
+    for (let letra of abc) {
+        let btn = document.createElement("button");
+        btn.textContent = letra;
+        btn.style.fontSize = "1.05em";
+        btn.disabled = letrasUsadas.includes(letra) || !palabraJuegoActivo;
+        btn.onclick = () => seleccionarLetraPalabra(letra);
+        if (letrasUsadas.includes(letra)) btn.style.opacity = 0.4;
+        cont.appendChild(btn);
+    }
+}
+
+function seleccionarLetraPalabra(letra) {
+    if (!palabraJuegoActivo || letrasUsadas.includes(letra)) return;
+    letrasUsadas.push(letra);
+
+    let acierto = false;
+    for (let i = 0; i < palabraSecreta.length; i++) {
+        if (palabraSecreta[i].toUpperCase() === letra) {
+            palabraAdivinada[i] = letra;
+            acierto = true;
+        }
+    }
+
+    if (!acierto) intentosPalabra++;
+    renderPalabra();
+    renderAbecedario();
+
+    if (palabraAdivinada.join("") === palabraSecreta) {
+        document.getElementById('palabraStatus').textContent = "¡Ganaste! 😃";
+        palabraJuegoActivo = false;
+    } else if (intentosPalabra >= 5) {
+        document.getElementById('palabraStatus').textContent = `¡Perdiste! La palabra era: ${palabraSecreta}`;
+        palabraJuegoActivo = false;
+    } else {
+        document.getElementById('palabraStatus').textContent = `Te quedan ${5 - intentosPalabra} intentos.`;
+    }
+}
         // ===== FUNCIÓN SELECTOR DE JUEGO =====
         function selectGame(game) {
-            currentGame = game;
-            clearGame();
+    currentGame = game;
+    clearGame();
 
-            document.getElementById('btnSnakeGame').classList.remove('active');
-            document.getElementById('btnMarioGame').classList.remove('active');
+    document.getElementById('btnSnakeGame').classList.remove('active');
+    document.getElementById('btnMarioGame').classList.remove('active');
+    document.getElementById('btnPalabraGame').classList.remove('active');
 
-            if (game === 'snake') {
-                document.getElementById('btnSnakeGame').classList.add('active');
-                document.getElementById('snakeMenu').style.display = 'flex';
-                document.getElementById('marioMenu').style.display = 'none';
-                document.getElementById('snakeControls').style.display = 'block';
-                document.getElementById('marioControls').style.display = 'none';
-                document.getElementById('snakePlayerInfo').style.display = 'block';
-                document.getElementById('score').style.display = 'block';
-                document.getElementById('marioScore').style.display = 'none';
-                document.getElementById('avatarSelector').classList.remove('visible');
-                document.getElementById('instructions').style.display = 'block';
-                document.getElementById('marioInstructions').style.display = 'none';
-            } else {
-                document.getElementById('btnMarioGame').classList.add('active');
-                document.getElementById('snakeMenu').style.display = 'none';
-                document.getElementById('marioMenu').style.display = 'flex';
-                document.getElementById('snakeControls').style.display = 'none';
-                document.getElementById('marioControls').style.display = 'block';
-                document.getElementById('snakePlayerInfo').style.display = 'none';
-                document.getElementById('score').style.display = 'none';
-                document.getElementById('marioScore').style.display = 'block';
-                document.getElementById('avatarSelector').classList.add('visible');
-                document.getElementById('instructions').style.display = 'none';
-                document.getElementById('marioInstructions').style.display = 'block';
-            }
-        }
-
+    document.getElementById('palabraPanel').style.display = 'none';
+    
+    if (game === 'snake') {
+        document.getElementById('btnSnakeGame').classList.add('active');
+        document.getElementById('snakeMenu').style.display = 'flex';
+        document.getElementById('marioMenu').style.display = 'none';
+        document.getElementById('palabraMenu').style.display = 'none';
+        document.getElementById('snakeControls').style.display = 'block';
+        document.getElementById('marioControls').style.display = 'none';
+        document.getElementById('snakePlayerInfo').style.display = 'block';
+        document.getElementById('score').style.display = 'block';
+        document.getElementById('marioScore').style.display = 'none';
+        document.getElementById('avatarSelector').classList.remove('visible');
+        document.getElementById('instructions').style.display = 'block';
+        document.getElementById('marioInstructions').style.display = 'none';
+    } else if (game === 'mario') {
+        document.getElementById('btnMarioGame').classList.add('active');
+        document.getElementById('snakeMenu').style.display = 'none';
+        document.getElementById('marioMenu').style.display = 'flex';
+        document.getElementById('palabraMenu').style.display = 'none';
+        document.getElementById('snakeControls').style.display = 'none';
+        document.getElementById('marioControls').style.display = 'block';
+        document.getElementById('snakePlayerInfo').style.display = 'none';
+        document.getElementById('score').style.display = 'none';
+        document.getElementById('marioScore').style.display = 'block';
+        document.getElementById('avatarSelector').classList.add('visible');
+        document.getElementById('instructions').style.display = 'none';
+        document.getElementById('marioInstructions').style.display = 'block';
+    } else if (game === 'palabra') {
+        document.getElementById('btnPalabraGame').classList.add('active');
+        document.getElementById('snakeMenu').style.display = 'none';
+        document.getElementById('marioMenu').style.display = 'none';
+        document.getElementById('palabraMenu').style.display = 'flex';
+        document.getElementById('snakeControls').style.display = 'none';
+        document.getElementById('marioControls').style.display = 'none';
+        document.getElementById('snakePlayerInfo').style.display = 'none';
+        document.getElementById('score').style.display = 'none';
+        document.getElementById('marioScore').style.display = 'none';
+        document.getElementById('avatarSelector').classList.remove('visible');
+        document.getElementById('instructions').style.display = 'none';
+        document.getElementById('marioInstructions').style.display = 'none';
+        document.getElementById('palabraPanel').style.display = 'block';
+    }
+}
         // ===== FUNCIONES SNAKE =====
 
         function roundRect(ctx, x, y, width, height, radius) {
@@ -1681,22 +1801,23 @@
         }
 
         function clearGame() {
-            gameRunning = false;
-            marioGameRunning = false;
-            if (gameInterval) clearInterval(gameInterval);
-            if (marioGameInterval) clearInterval(marioGameInterval);
-            
-            canvas = document.getElementById('gameCanvas');
-            marioCanvas = document.getElementById('marioCanvas');
-            if (canvas) canvas.style.display = 'none';
-            if (marioCanvas) marioCanvas.style.display = 'none';
-            
-            document.querySelector('.right-panel').style.display = 'none';
-            document.getElementById('debug').style.display = 'none';
-            document.getElementById('instructions').style.display = 'block';
-            document.getElementById('marioInstructions').style.display = 'none';
-        }
+    gameRunning = false;
+    marioGameRunning = false;
+    palabraJuegoActivo = false;
+    if (gameInterval) clearInterval(gameInterval);
+    if (marioGameInterval) clearInterval(marioGameInterval);
 
+    canvas = document.getElementById('gameCanvas');
+    marioCanvas = document.getElementById('marioCanvas');
+    if (canvas) canvas.style.display = 'none';
+    if (marioCanvas) marioCanvas.style.display = 'none';
+
+    document.querySelector('.right-panel').style.display = 'none';
+    document.getElementById('palabraPanel').style.display = 'none';
+    document.getElementById('debug').style.display = 'none';
+    document.getElementById('instructions').style.display = 'block';
+    document.getElementById('marioInstructions').style.display = 'none';
+}
         // Inicializar
         updateLeaderboard();
         setGridSize('medium');
