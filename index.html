@@ -5,8 +5,400 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎮 Mini Juegos Web</title>
     <style>
-        /* ...Aquí iría TODO tu CSS original, sin cambios... */
-        /* Puedes mantener todo el CSS anterior */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 900px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .menu {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .game-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .game-selector button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .game-selector button:hover {
+            transform: scale(1.05);
+        }
+
+        .game-selector button.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        button.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .game-wrapper {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        #gameCanvas {
+            border: 5px solid #FFD700;
+            background-color: #0a0a0a;
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            width: 400px;
+            height: 400px;
+        }
+
+        #marioCanvas {
+            border: 5px solid #FF6B35;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            border-radius: 10px;
+            width: 400px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .right-panel {
+            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 250px;
+        }
+
+        #score, #marioScore {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        #marioScore {
+            color: #FFD700;
+        }
+
+        .player-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .player-info p {
+            margin: 5px 0;
+            color: #87CEEB;
+        }
+
+        .avatar-selector {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .avatar-selector.visible {
+            display: block;
+        }
+
+        .avatar-selector h4 {
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .avatars-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-option {
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            padding: 8px;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.05);
+            border-color: #FFD700;
+        }
+
+        .avatar-option.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .avatar-option div {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .avatar-option p {
+            font-size: 12px;
+            color: #87CEEB;
+            margin: 0;
+        }
+
+        .controls-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .controls-section h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-buttons button {
+            padding: 6px 12px;
+            margin: 3px;
+            font-size: 12px;
+        }
+
+        .grid-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .grid-buttons button {
+            padding: 6px 12px;
+            margin: 3px;
+            font-size: 12px;
+            background: #2196F3;
+        }
+
+        .grid-buttons button:hover {
+            background: #0b7dda;
+        }
+
+        .grid-buttons button.active {
+            background: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        .info-display {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .info-value {
+            color: #87CEEB;
+        }
+
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .leaderboard h3 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .score-position {
+            color: #FFD700;
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        .instructions {
+            background-color: rgba(232, 244, 248, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        #debug {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+            text-align: center;
+        }
+
+        .slider-container {
+            display: none;
+            margin-top: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .slider-container.visible {
+            display: block;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+        }
+
+        #speedValue {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #FFD700;
+            text-align: center;
+        }
+
+        #marioInstructions {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -24,40 +416,85 @@
             <button onclick="startSnakeGame()">🐍 Iniciar Juego</button>
             <button onclick="clearGame()">🗑️ Limpiar</button>
         </div>
+
         <div class="menu" id="marioMenu" style="display: none;">
             <button onclick="startMarioGame()">🎮 Iniciar Juego</button>
             <button onclick="clearGame()">🗑️ Limpiar</button>
         </div>
 
+        <!-- CANVAS Y PANEL DERECHO -->
         <div class="game-wrapper">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
             <canvas id="marioCanvas" width="400" height="300"></canvas>
             
             <div class="right-panel">
+                <!-- INFO DEL JUGADOR SNAKE -->
                 <div class="player-info" id="snakePlayerInfo">
                     <p><strong>🎮 Jugador:</strong> <span id="playerName">Snake Master</span></p>
                 </div>
+
                 <div id="score">📊 Puntuación: 0</div>
+
+                <!-- SELECTOR DE AVATAR (SOLO MARIO) -->
                 <div class="avatar-selector" id="avatarSelector">
                     <h4>👤 Selecciona tu Avatar</h4>
                     <div class="avatars-container">
                         <div class="avatar-option selected" id="avatar1" onclick="selectAvatar('boy')">
-                            <div><img src="boy.png" alt="Chico" style="height:40px"></div>
+                            <div>👨</div>
                             <p>Chico</p>
                         </div>
                         <div class="avatar-option" id="avatar2" onclick="selectAvatar('girl')">
-                            <div><img src="girl.png" alt="Chica" style="height:40px"></div>
+                            <div>👩</div>
                             <p>Chica</p>
                         </div>
                     </div>
-                    <p id="selectedAvatarText" style="font-size: 12px; color: #87CEEB; margin-top: 10px; margin-bottom: 0;">Avatar: <img src="boy.png" alt="Chico" style="height:16px;vertical-align:middle;"> Chico</p>
+                    <p id="selectedAvatarText" style="font-size: 12px; color: #87CEEB; margin-top: 10px; margin-bottom: 0;">Avatar: 👨 Chico</p>
                 </div>
+
                 <div id="marioScore" style="display: none;">⭐ Estrellas: 0</div>
+
+                <!-- CONTROLES SNAKE -->
                 <div id="snakeControls">
-                    <!-- ...controles originales de snake... -->
+                    <div class="controls-section">
+                        <h4>⚡ Dificultad</h4>
+                        <div class="difficulty-buttons">
+                            <button onclick="setDifficulty('easy')" id="btnEasy">🐢 Fácil</button>
+                            <button onclick="setDifficulty('normal')" id="btnNormal" class="active">⚡ Normal</button>
+                            <button onclick="setDifficulty('hard')" id="btnHard">🔥 Difícil</button>
+                            <button onclick="setDifficulty('extreme')" id="btnExtremeDiff">💀 Extremo</button>
+                        </div>
+
+                        <div class="slider-container visible">
+                            <label for="speedSlider">Velocidad:</label>
+                            <input type="range" id="speedSlider" min="50" max="250" value="150" step="10" 
+                                   oninput="setCustomSpeed(this.value)">
+                            <div id="speedValue">150ms</div>
+                        </div>
+                    </div>
+
+                    <div class="controls-section">
+                        <h4>📏 Cuadrícula</h4>
+                        <div class="grid-buttons">
+                            <button onclick="setGridSize('large')" id="btnLarge">🟫 Grande</button>
+                            <button onclick="setGridSize('medium')" id="btnMedium" class="active">🟩 Medio</button>
+                            <button onclick="setGridSize('small')" id="btnSmall">🟪 Pequeño</button>
+                        </div>
+                    </div>
+
+                    <div class="info-display">
+                        <div class="info-row">
+                            <span class="info-label">Dificultad:</span>
+                            <span class="info-value" id="infoSpeed">150ms</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Cuadrícula:</span>
+                            <span class="info-value" id="infoGrid">15x15</span>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- CONTROLES MARIO -->
                 <div id="marioControls" style="display: none;">
-                    <!-- ...controles originales Mario... -->
                     <div class="controls-section">
                         <h4>🎮 Controles</h4>
                         <p style="font-size: 13px; line-height: 1.6;">
@@ -66,6 +503,7 @@
                             <strong>💫</strong> - Salta champiñones
                         </p>
                     </div>
+
                     <div class="info-display">
                         <div class="info-row">
                             <span class="info-label">Vidas:</span>
@@ -77,6 +515,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡️ ⬇️</div>
                 
                 <div class="leaderboard">
@@ -105,52 +544,638 @@
     </div>
 
     <script>
-        // SPRITES
-        const boySprite = new Image();
-        boySprite.src = 'boy.png';
-        const girlSprite = new Image();
-        girlSprite.src = 'girl.png';
-        const mushroomSprite = new Image();
-        mushroomSprite.src = 'mushroom.png';
-        const coinSprite = new Image();
-        coinSprite.src = 'coin.png';
+        // ===== VARIABLES GLOBALES =====
+        let currentAvatar = 'boy';
+        let currentGame = 'snake';
+        let gameRunning = false;
+        let canvas = null;
+        let ctx = null;
 
-        // Aquí el resto de tus variables globales (igual que en tu proyecto original)
-        // ...
-        // (Puedes copiar/pegar tu bloque de variables originales aquí, sin tocar nada de Snake)
+        // ===== SNAKE VARIABLES =====
+        let snakeBox = 20;
+        let snakeGridSize = 15;
+        let snake = [];
+        let food = {};
+        let snakeScore = 0;
+        let gameInterval = null;
+        let currentDirection = { x: 1, y: 0 };
+        let nextDirection = { x: 1, y: 0 };
+        let gameSpeed = 150;
+        let currentDifficulty = 'normal';
+        let currentGridSize = 'medium';
 
-        // --- CLASES MODIFICADAS PARA USAR SPRITES ---
+        // ===== MARIO VARIABLES =====
+        let mario = null;
+        let marioCanvas = null;
+        let marioCtx = null;
+        let marioScore = 0;
+        let marioLives = 3;
+        let marioDistance = 0;
+        let platforms = [];
+        let groundSections = [];
+        let enemies = [];
+        let coins = [];
+        let finishFlag = null;
+        let marioGameInterval = null;
+        let keys = {};
+        let gravity = 0.6;
+        let platformColors = ['#8B4513', '#A0522D', '#CD853F'];
+        let marioGameRunning = false;
+        let cameraX = 0;
+        let levelLength = 0;
+
+        // Configuración de dificultades
+        const difficulties = {
+            easy: { speed: 200, name: 'FÁCIL 🐢' },
+            normal: { speed: 150, name: 'NORMAL ⚡' },
+            hard: { speed: 100, name: 'DIFÍCIL 🔥' },
+            extreme: { speed: 50, name: 'EXTREMO 💀' }
+        };
+
+        // Configuración de tamaños de cuadrícula
+        const gridSizes = {
+            large: { size: 10, name: 'GRANDE' },
+            medium: { size: 15, name: 'MEDIO' },
+            small: { size: 20, name: 'PEQUEÑO' }
+        };
+
+        // Array de scores
+        let topScores = JSON.parse(localStorage.getItem('snakeTopScores')) || [];
+
+        // ===== SELECTOR DE AVATAR =====
+        function selectAvatar(avatar) {
+            currentAvatar = avatar;
+
+            document.getElementById('avatar1').classList.remove('selected');
+            document.getElementById('avatar2').classList.remove('selected');
+
+            if (avatar === 'boy') {
+                document.getElementById('avatar1').classList.add('selected');
+                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👨 Chico';
+            } else {
+                document.getElementById('avatar2').classList.add('selected');
+                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👩 Chica';
+            }
+        }
+
+        // ===== FUNCIÓN SELECTOR DE JUEGO =====
+        function selectGame(game) {
+            currentGame = game;
+            clearGame();
+
+            document.getElementById('btnSnakeGame').classList.remove('active');
+            document.getElementById('btnMarioGame').classList.remove('active');
+
+            if (game === 'snake') {
+                document.getElementById('btnSnakeGame').classList.add('active');
+                document.getElementById('snakeMenu').style.display = 'flex';
+                document.getElementById('marioMenu').style.display = 'none';
+                document.getElementById('snakeControls').style.display = 'block';
+                document.getElementById('marioControls').style.display = 'none';
+                document.getElementById('snakePlayerInfo').style.display = 'block';
+                document.getElementById('score').style.display = 'block';
+                document.getElementById('marioScore').style.display = 'none';
+                document.getElementById('avatarSelector').classList.remove('visible');
+                document.getElementById('instructions').style.display = 'block';
+                document.getElementById('marioInstructions').style.display = 'none';
+            } else {
+                document.getElementById('btnMarioGame').classList.add('active');
+                document.getElementById('snakeMenu').style.display = 'none';
+                document.getElementById('marioMenu').style.display = 'flex';
+                document.getElementById('snakeControls').style.display = 'none';
+                document.getElementById('marioControls').style.display = 'block';
+                document.getElementById('snakePlayerInfo').style.display = 'none';
+                document.getElementById('score').style.display = 'none';
+                document.getElementById('marioScore').style.display = 'block';
+                document.getElementById('avatarSelector').classList.add('visible');
+                document.getElementById('instructions').style.display = 'none';
+                document.getElementById('marioInstructions').style.display = 'block';
+            }
+        }
+
+        // ===== FUNCIONES SNAKE =====
+
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        window.addEventListener('keydown', function(e) {
+            keys[e.key] = true;
+
+            if (currentGame === 'snake' && gameRunning) {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        if (currentDirection.x === 0) {
+                            nextDirection = { x: -1, y: 0 };
+                            e.preventDefault();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (currentDirection.x === 0) {
+                            nextDirection = { x: 1, y: 0 };
+                            e.preventDefault();
+                        }
+                        break;
+                    case 'ArrowUp':
+                        if (currentDirection.y === 0) {
+                            nextDirection = { x: 0, y: -1 };
+                            e.preventDefault();
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (currentDirection.y === 0) {
+                            nextDirection = { x: 0, y: 1 };
+                            e.preventDefault();
+                        }
+                        break;
+                }
+            }
+        });
+
+        window.addEventListener('keyup', function(e) {
+            keys[e.key] = false;
+        });
+
+        function setGridSize(size) {
+            currentGridSize = size;
+            snakeGridSize = gridSizes[size].size;
+            snakeBox = 400 / snakeGridSize;
+
+            document.getElementById('btnLarge').classList.remove('active');
+            document.getElementById('btnMedium').classList.remove('active');
+            document.getElementById('btnSmall').classList.remove('active');
+            
+            const btnId = 'btn' + size.charAt(0).toUpperCase() + size.slice(1);
+            document.getElementById(btnId).classList.add('active');
+            
+            document.getElementById('infoGrid').textContent = snakeGridSize + 'x' + snakeGridSize;
+
+            if (gameRunning && currentGame === 'snake') {
+                startSnakeGame();
+            }
+        }
+
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            gameSpeed = difficulties[difficulty].speed;
+            
+            document.getElementById('btnEasy').classList.remove('active');
+            document.getElementById('btnNormal').classList.remove('active');
+            document.getElementById('btnHard').classList.remove('active');
+            document.getElementById('btnExtremeDiff').classList.remove('active');
+            
+            const btnId = 'btn' + difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            document.getElementById(btnId).classList.add('active');
+            
+            document.getElementById('infoSpeed').textContent = gameSpeed + 'ms';
+            document.getElementById('speedSlider').value = gameSpeed;
+            document.getElementById('speedValue').textContent = gameSpeed + 'ms';
+            
+            if (gameRunning && currentGame === 'snake') {
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(snakeGameLoop, gameSpeed);
+            }
+        }
+
+        function setCustomSpeed(speed) {
+            gameSpeed = parseInt(speed);
+            document.getElementById('speedValue').textContent = gameSpeed + 'ms';
+            document.getElementById('infoSpeed').textContent = gameSpeed + 'ms';
+            currentDifficulty = 'custom';
+            
+            document.getElementById('btnEasy').classList.remove('active');
+            document.getElementById('btnNormal').classList.remove('active');
+            document.getElementById('btnHard').classList.remove('active');
+            document.getElementById('btnExtremeDiff').classList.remove('active');
+            
+            if (gameRunning && currentGame === 'snake') {
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(snakeGameLoop, gameSpeed);
+            }
+        }
+
+        function startSnakeGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            document.getElementById('marioCanvas').style.display = 'none';
+            document.querySelector('.right-panel').style.display = 'block';
+            document.getElementById('debug').style.display = 'block';
+            document.getElementById('instructions').style.display = 'none';
+
+            const centerGrid = Math.floor(snakeGridSize / 2);
+            snake = [
+                { x: centerGrid, y: centerGrid },
+                { x: centerGrid - 1, y: centerGrid },
+                { x: centerGrid - 2, y: centerGrid }
+            ];
+            currentDirection = { x: 1, y: 0 };
+            nextDirection = { x: 1, y: 0 };
+            snakeScore = 0;
+            gameRunning = true;
+
+            generateFood();
+
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(snakeGameLoop, gameSpeed);
+            
+            canvas.focus();
+        }
+
+        function generateFood() {
+            let newFood;
+            let foodOnSnake = true;
+            
+            while (foodOnSnake) {
+                newFood = {
+                    x: Math.floor(Math.random() * snakeGridSize),
+                    y: Math.floor(Math.random() * snakeGridSize)
+                };
+                
+                foodOnSnake = snake.some(segment => 
+                    segment.x === newFood.x && segment.y === newFood.y
+                );
+            }
+            
+            food = newFood;
+        }
+
+        function snakeGameLoop() {
+            if (!gameRunning || currentGame !== 'snake') return;
+
+            currentDirection = nextDirection;
+
+            const head = { ...snake[0] };
+            head.x += currentDirection.x;
+            head.y += currentDirection.y;
+
+            if (head.x < 0 || head.x >= snakeGridSize || 
+                head.y < 0 || head.y >= snakeGridSize) {
+                endSnakeGame('¡Chocaste con la pared!');
+                return;
+            }
+
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                endSnakeGame('¡Te comiste a ti misma!');
+                return;
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                snakeScore += 10;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            document.getElementById('score').textContent = '📊 Puntuación: ' + snakeScore;
+            drawSnakeGame();
+        }
+
+        function drawSnakeSegment(x, y, isHead, direction) {
+            const padding = Math.max(1, snakeBox * 0.1);
+            const size = snakeBox - padding * 2;
+            
+            if (isHead) {
+                ctx.fillStyle = '#00ff00';
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, snakeBox * 0.3));
+                ctx.fill();
+                
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                roundRect(ctx, x + padding + 1, y + padding + 1, size - 2, size - 2, Math.max(1, snakeBox * 0.2));
+                ctx.fill();
+                
+                ctx.fillStyle = '#000';
+                const eyeSize = Math.max(1, snakeBox * 0.15);
+                const eyeOffset = snakeBox * 0.25;
+                
+                if (direction.x === 1) {
+                    ctx.fillRect(x + eyeOffset + 2, y + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + 2, y + eyeOffset + snakeBox * 0.4, eyeSize, eyeSize);
+                } else if (direction.x === -1) {
+                    ctx.fillRect(x + padding + 1, y + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(x + padding + 1, y + eyeOffset + snakeBox * 0.4, eyeSize, eyeSize);
+                } else if (direction.y === -1) {
+                    ctx.fillRect(x + eyeOffset, y + padding + 1, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + snakeBox * 0.4, y + padding + 1, eyeSize, eyeSize);
+                } else if (direction.y === 1) {
+                    ctx.fillRect(x + eyeOffset, y + eyeOffset + 2, eyeSize, eyeSize);
+                    ctx.fillRect(x + eyeOffset + snakeBox * 0.4, y + eyeOffset + 2, eyeSize, eyeSize);
+                }
+            } else {
+                let gradient = ctx.createLinearGradient(x, y, x + snakeBox, y + snakeBox);
+                gradient.addColorStop(0, '#00dd00');
+                gradient.addColorStop(0.5, '#00aa00');
+                gradient.addColorStop(1, '#007700');
+                
+                ctx.fillStyle = gradient;
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, snakeBox * 0.25));
+                ctx.fill();
+                
+                ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = Math.max(0.5, snakeBox * 0.05);
+                roundRect(ctx, x + padding, y + padding, size, size, Math.max(2, snakeBox * 0.25));
+                ctx.stroke();
+            }
+        }
+
+        function drawSnakeApple(x, y) {
+            const centerX = x + snakeBox / 2;
+            const centerY = y + snakeBox / 2;
+            const radius = snakeBox / 2 - 1;
+            
+            let gradient = ctx.createRadialGradient(centerX - 2, centerY - 2, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, '#ff4444');
+            gradient.addColorStop(0.6, '#cc0000');
+            gradient.addColorStop(1, '#990000');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.4)';
+            ctx.beginPath();
+            ctx.arc(centerX - 2, centerY - 2, radius / 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = Math.max(1, snakeBox * 0.1);
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - radius);
+            ctx.lineTo(centerX, centerY - radius - 3);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#22aa22';
+            ctx.beginPath();
+            ctx.arc(centerX + 2, centerY - radius - 2, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSnakeGame() {
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'rgba(100, 100, 100, 0.1)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= snakeGridSize; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * snakeBox, 0);
+                ctx.lineTo(i * snakeBox, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i <= snakeGridSize; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * snakeBox);
+                ctx.lineTo(canvas.width, i * snakeBox);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < snake.length; i++) {
+                drawSnakeSegment(
+                    snake[i].x * snakeBox,
+                    snake[i].y * snakeBox,
+                    i === 0,
+                    currentDirection
+                );
+            }
+
+            drawSnakeApple(food.x * snakeBox, food.y * snakeBox);
+        }
+
+        function endSnakeGame(reason) {
+            gameRunning = false;
+            if (gameInterval) clearInterval(gameInterval);
+
+            addSnakeScore(snakeScore);
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
+
+            ctx.fillStyle = '#ffff00';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(reason, canvas.width / 2, canvas.height / 2);
+
+            ctx.fillStyle = '#00ff00';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Puntuación: ' + snakeScore, canvas.width / 2, canvas.height / 2 + 40);
+        }
+
+        function addSnakeScore(newScore) {
+            topScores.push({
+                score: newScore,
+                date: new Date().toLocaleDateString(),
+                game: 'snake'
+            });
+
+            topScores.sort((a, b) => b.score - a.score);
+            topScores = topScores.slice(0, 10);
+
+            localStorage.setItem('snakeTopScores', JSON.stringify(topScores));
+            updateLeaderboard();
+        }
+
+        // ===== FUNCIONES MARIO =====
 
         class MarioPlayer {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.width = 55;
-                this.height = 120;
+                this.width = 35;
+                this.height = 45;
                 this.velocityY = 0;
                 this.velocityX = 0;
                 this.isJumping = false;
                 this.onPlatform = false;
                 this.direction = 1;
             }
+
             draw(ctx) {
                 const screenX = this.x - cameraX;
+                
                 if (currentAvatar === 'boy') {
-                    ctx.drawImage(boySprite, screenX, this.y, this.width, this.height);
+                    // CHICO
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#D2B48C';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.5, Math.PI * 1.5);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#2C2414';
+                    ctx.fillRect(screenX + 8, this.y - 2, 20, 8);
+                    ctx.beginPath();
+                    ctx.arc(screenX + 10, this.y + 2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 26, this.y + 2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 21 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 9, 2, 0, Math.PI);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#A9A9A9';
+                    ctx.fillRect(screenX + 6, this.y + 18, 24, 18);
+                    ctx.fillStyle = '#D3D3D3';
+                    ctx.fillRect(screenX + 6, this.y + 18, 24, 2);
+                    
+                    ctx.fillStyle = '#000080';
+                    ctx.fillRect(screenX + 10, this.y + 22, 14, 6);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 4px Arial';
+                    ctx.fillText('TJ', screenX + 12, this.y + 26);
+                    
+                    ctx.fillStyle = '#F4A460';
+                    ctx.fillRect(screenX + 3, this.y + 20, 4, 12);
+                    ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
+                    
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#4A7BA7';
+                    ctx.fillRect(screenX + 8, this.y + 36, 19, 9);
+                    
+                    ctx.fillStyle = '#F5F5DC';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
+                    ctx.fillStyle = '#000';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.strokeRect(screenX + 19, this.y + 42, 8, 4);
+                    
                 } else {
-                    ctx.drawImage(girlSprite, screenX, this.y, this.width, this.height);
+                    // CHICA
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#D2B48C';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.3, Math.PI * 1.7);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#8B6F47';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 18, this.y + 15, 12, 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#704214';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 8, this.y + 12, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 28, this.y + 12, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#8B4513';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 15, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 21, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 16, this.y + 6, 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 22, this.y + 6, 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = '#FF69B4';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 10, 2.5, 0, Math.PI);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(screenX + 8, this.y + 18, 20, 12);
+                    ctx.fillStyle = '#FF1493';
+                    ctx.fillRect(screenX + 8, this.y + 18, 20, 1);
+                    
+                    ctx.fillStyle = '#F4A460';
+                    ctx.fillRect(screenX + 4, this.y + 20, 4, 12);
+                    ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
+                    
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#1E3A5F';
+                    ctx.fillRect(screenX + 8, this.y + 30, 19, 12);
+                    
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 33, 1, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#8B5A3C';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
+                    ctx.fillStyle = '#A0826D';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 2);
                 }
             }
+
             update() {
                 this.velocityY += gravity;
                 this.y += this.velocityY;
                 this.x += this.velocityX;
-                // Scroll centrado con límites
-                const desiredCamX = this.x + this.width/2 - marioCanvas.width/2;
-                cameraX = Math.max(0, Math.min(desiredCamX, levelLength + 100 - marioCanvas.width));
+
+                if (this.x < cameraX + 30) {
+                    this.x = cameraX + 30;
+                }
+                if (this.x + this.width > cameraX + marioCanvas.width - 30) {
+                    cameraX = this.x + this.width - marioCanvas.width + 30;
+                }
+
                 marioDistance = Math.floor(cameraX / 10);
 
                 this.onPlatform = false;
+                
+                // Colisión con plataformas
                 platforms.forEach(platform => {
                     if (this.velocityY >= 0 &&
                         this.y + this.height >= platform.y &&
@@ -163,6 +1188,8 @@
                         this.isJumping = false;
                     }
                 });
+
+                // Colisión con tierra
                 groundSections.forEach(ground => {
                     if (this.velocityY >= 0 &&
                         this.y + this.height >= ground.y &&
@@ -181,10 +1208,10 @@
                     if (marioLives <= 0) {
                         endMarioGame();
                     } else {
-                        this.x = cameraX + 50;
-                        this.y = 100;
-                        this.velocityY = 0;
-                        this.velocityX = 0;
+                        mario.x = cameraX + 50;
+                        mario.y = 100;
+                        mario.velocityY = 0;
+                        mario.velocityX = 0;
                     }
                 }
             }
@@ -194,18 +1221,59 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.width = 60;
-                this.height = 60;
+                this.width = 30;
+                this.height = 25;
                 this.direction = 1;
                 this.speed = 1;
                 this.alive = true;
             }
+
             draw(ctx) {
-                if (this.alive) {
-                    const screenX = this.x - cameraX;
-                    ctx.drawImage(mushroomSprite, screenX, this.y, this.width, this.height);
+                const screenX = this.x - cameraX;
+                if (this.alive && screenX > -30 && screenX < marioCanvas.width) {
+                    // Champiñón: BLANCO DE DEBAJO, ROJO DE ARRIBA
+                    // Parte blanca (debajo)
+                    ctx.fillStyle = '#FFFACD';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 15, this.y + 16, 14, 7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Parte roja (sombrilla arriba)
+                    ctx.fillStyle = '#DC143C';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 15, this.y + 6, 13, 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Puntos blancos en la sombrilla roja
+                    ctx.fillStyle = '#FFF';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 9, this.y + 4, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 2, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 21, this.y + 4, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Ojos
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 12, this.y + 7, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 7, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Expresión molesta
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 9, 1.5, Math.PI, Math.PI * 2);
+                    ctx.stroke();
                 }
             }
+
             update() {
                 if (this.alive) {
                     this.x += this.speed * this.direction;
@@ -214,31 +1282,108 @@
                     }
                 }
             }
-            kill() { this.alive = false; }
+
+            kill() {
+                this.alive = false;
+            }
         }
 
         class Coin {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.radius = 18;
+                this.radius = 7;
                 this.collected = false;
                 this.rotation = Math.random() * Math.PI * 2;
             }
+
             draw(ctx) {
                 const screenX = this.x - cameraX;
-                if (!this.collected) {
+                if (!this.collected && screenX > -15 && screenX < marioCanvas.width + 15) {
                     ctx.save();
                     ctx.translate(screenX, this.y);
                     ctx.rotate(this.rotation);
-                    ctx.drawImage(coinSprite, -this.radius, -this.radius, this.radius*2, this.radius*2);
+                    
+                    ctx.fillStyle = '#FFD700';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#FFA500';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius - 1, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 8px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('$', 0, 0);
+                    
                     ctx.restore();
+                    
                     this.rotation += 0.05;
                 }
             }
         }
 
-        // startMarioGame modificado:
+        class FinishFlag {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 40;
+                this.height = 60;
+                this.flagWave = 0;
+            }
+
+            draw(ctx) {
+                const screenX = this.x - cameraX;
+                if (screenX > -50 && screenX < marioCanvas.width + 50) {
+                    this.flagWave += 0.05;
+                    
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(screenX + 15, this.y, 8, this.height);
+                    ctx.fillStyle = '#A0522D';
+                    ctx.fillRect(screenX + 15, this.y, 4, this.height);
+                    
+                    ctx.fillStyle = '#FF0000';
+                    ctx.save();
+                    ctx.translate(screenX + 23, this.y + 10);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(8 + Math.sin(this.flagWave) * 3, -5, 20, 0);
+                    ctx.quadraticCurveTo(15, 15, 0, 20);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                    
+                    ctx.strokeStyle = '#CC0000';
+                    ctx.lineWidth = 1;
+                    ctx.save();
+                    ctx.translate(screenX + 23, this.y + 10);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(8 + Math.sin(this.flagWave) * 3, -5, 20, 0);
+                    ctx.quadraticCurveTo(15, 15, 0, 20);
+                    ctx.stroke();
+                    ctx.restore();
+                    
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('⭐', screenX + 33, this.y + 20);
+                }
+            }
+
+            checkCollision(mario) {
+                return mario.x < this.x + this.width &&
+                       mario.x + mario.width > this.x &&
+                       mario.y < this.y + this.height &&
+                       mario.y + mario.height > this.y;
+            }
+        }
+
         function startMarioGame() {
             marioCanvas = document.getElementById('marioCanvas');
             marioCtx = marioCanvas.getContext('2d');
@@ -248,67 +1393,318 @@
             document.querySelector('.right-panel').style.display = 'block';
             document.getElementById('debug').style.display = 'block';
             document.getElementById('marioInstructions').style.display = 'block';
-            marioScore = 0; marioLives = 3; marioDistance = 0; cameraX = 0; marioGameRunning = true;
-            groundSections = [{ x: 0, y: marioCanvas.height-30, width:200, height:30 }];
-            let currentX = 200, isGroundSection = false; platforms = [];
-            for(let i=0; i<20; i++) {
-                if(isGroundSection) {
-                    groundSections.push({x:currentX,y:marioCanvas.height-30,width:150,height:30});
-                    currentX += 150+40;
+
+            marioScore = 0;
+            marioLives = 3;
+            marioDistance = 0;
+            cameraX = 0;
+            marioGameRunning = true;
+
+            platforms = [];
+            groundSections = [];
+
+            // INICIO - Tierra
+            groundSections.push({
+                x: 0,
+                y: marioCanvas.height - 30,
+                width: 200,
+                height: 30
+            });
+
+            let currentX = 200;
+            let isGroundSection = false;
+
+            // Generar nivel con alternancia entre plataformas y tierra
+            for (let i = 0; i < 20; i++) {
+                if (isGroundSection) {
+                    // Sección de tierra
+                    groundSections.push({
+                        x: currentX,
+                        y: marioCanvas.height - 30,
+                        width: 150,
+                        height: 30
+                    });
+                    currentX += 150 + 40;
                 } else {
-                    let currentY = marioCanvas.height-100, alternateLeft=false;
-                    for(let j=0; j<4; j++) {
-                        const w=110,h=20;
-                        platforms.push({x:currentX,y:currentY,width:w,height:h});
-                        currentX += w+40;
-                        if(alternateLeft) currentY += 45; else currentY -= 45;
+                    // Sección de plataformas
+                    let currentY = marioCanvas.height - 100;
+                    let alternateLeft = false;
+
+                    for (let j = 0; j < 4; j++) {
+                        const platformWidth = 90;
+                        const platformHeight = 15;
+                        
+                        platforms.push({
+                            x: currentX,
+                            y: currentY,
+                            width: platformWidth,
+                            height: platformHeight
+                        });
+
+                        currentX += platformWidth + 40;
+                        
+                        if (alternateLeft) {
+                            currentY += 45;
+                        } else {
+                            currentY -= 45;
+                        }
+                        
                         alternateLeft = !alternateLeft;
-                        if(currentY<60) currentY=60;
-                        if(currentY>marioCanvas.height-100) currentY=marioCanvas.height-100;
+                        
+                        if (currentY < 60) currentY = 60;
+                        if (currentY > marioCanvas.height - 100) currentY = marioCanvas.height - 100;
                     }
                 }
+
                 isGroundSection = !isGroundSection;
             }
+
             levelLength = currentX;
-            enemies=[]; coins=[];
-            for(let i=0;i<platforms.length;i++) {
-                if(i%2===0) { let p=platforms[i]; enemies.push(new Enemy(p.x+p.width/2-32, p.y-62)); }
-                let p=platforms[i];
-                for(let c=0;c<3;c++) coins.push(new Coin(p.x+25+c*24, p.y-25));
+
+            // Enemigos distribuidos
+            enemies = [
+                new Enemy(350, 180),
+                new Enemy(700, 180),
+                new Enemy(1100, 180),
+                new Enemy(1500, 180)
+            ];
+
+            // Monedas
+            coins = [];
+            for (let i = 0; i < 40; i++) {
+                const coinX = 150 + i * 90;
+                const coinY = Math.random() * 80 + 60;
+                coins.push(new Coin(coinX, coinY));
             }
-            for(let g=0;g<groundSections.length;g++) {
-                let gs=groundSections[g];
-                if(gs.width>50&&g%2===0) {
-                    enemies.push(new Enemy(gs.x+gs.width/2-32,gs.y-62));
-                    coins.push(new Coin(gs.x+30,gs.y-25));
-                    coins.push(new Coin(gs.x+gs.width-30,gs.y-25));
-                }
-            }
-            finishFlag = new FinishFlag(levelLength+50, marioCanvas.height-150);
-            mario = new MarioPlayer(50,marioCanvas.height-120);
+
+            // Bandera de meta FINAL
+            finishFlag = new FinishFlag(levelLength + 50, marioCanvas.height - 150);
+
+            mario = new MarioPlayer(50, marioCanvas.height - 90);
+
             if (marioGameInterval) clearInterval(marioGameInterval);
-            marioGameInterval = setInterval(marioGameLoopFunc, 1000/60);
+            marioGameInterval = setInterval(marioGameLoopFunc, 1000 / 60);
+
             marioCanvas.focus();
         }
 
-        // El resto de tu JS original de Snake, controles, leaderboard, etc. permanece igual
-        // Si tienes dudas con otra parte del JS, pega aquí tu bloque concreto y lo ajusto
+        function marioGameLoopFunc() {
+            if (!marioGameRunning) return;
 
-        // Reemplaza selectAvatar para mostrar miniatura en la descripción:
-        function selectAvatar(avatar) {
-            currentAvatar = avatar;
-            document.getElementById('avatar1').classList.remove('selected');
-            document.getElementById('avatar2').classList.remove('selected');
-            if (avatar === 'boy') {
-                document.getElementById('avatar1').classList.add('selected');
-                document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="boy.png" style="height:16px;vertical-align:middle;"> Chico';
-            } else {
-                document.getElementById('avatar2').classList.add('selected');
-                document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="girl.png" style="height:16px;vertical-align:middle;"> Chica';
+            mario.velocityX = 0;
+            if (keys['ArrowLeft']) {
+                mario.velocityX = -4;
+                mario.direction = -1;
             }
+            if (keys['ArrowRight']) {
+                mario.velocityX = 4;
+                mario.direction = 1;
+            }
+            if (keys['ArrowUp'] && mario.onPlatform && !mario.isJumping) {
+                mario.velocityY = -12;
+                mario.isJumping = true;
+            }
+
+            mario.update();
+            enemies.forEach(enemy => enemy.update());
+
+            coins.forEach((coin) => {
+                if (!coin.collected &&
+                    mario.x < coin.x + coin.radius + 10 &&
+                    mario.x + mario.width > coin.x - coin.radius - 10 &&
+                    mario.y < coin.y + coin.radius + 10 &&
+                    mario.y + mario.height > coin.y - coin.radius - 10) {
+                    coin.collected = true;
+                    marioScore += 1;
+                }
+            });
+
+            enemies.forEach((enemy, index) => {
+                if (enemy.alive && mario.x < enemy.x + enemy.width &&
+                    mario.x + mario.width > enemy.x &&
+                    mario.y < enemy.y + enemy.height &&
+                    mario.y + mario.height > enemy.y) {
+                    
+                    if (mario.velocityY > 0 && mario.y + mario.height - mario.velocityY <= enemy.y + 5) {
+                        enemy.kill();
+                        marioScore += 5;
+                        mario.velocityY = -8;
+                    } else {
+                        marioLives--;
+                        if (marioLives <= 0) {
+                            endMarioGame();
+                        } else {
+                            mario.x = cameraX + 50;
+                            mario.y = marioCanvas.height - 90;
+                            mario.velocityY = 0;
+                            mario.velocityX = 0;
+                        }
+                    }
+                }
+            });
+
+            if (finishFlag && finishFlag.checkCollision(mario)) {
+                winMarioGame();
+            }
+
+            document.getElementById('marioScore').textContent = '⭐ Estrellas: ' + marioScore;
+            document.getElementById('marioLives').textContent = '❤️ ' + marioLives;
+            document.getElementById('marioDistance').textContent = marioDistance + 'm';
+            drawMarioGame();
         }
-        // Inicializar todo igual que antes
-        // ...
+
+        function drawMarioGame() {
+            marioCtx.fillStyle = '#87CEEB';
+            marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
+
+            // Nubes
+            marioCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            for (let i = -2; i < 5; i++) {
+                const cloudX = (i * 150 - cameraX * 0.3) % (marioCanvas.width + 100);
+                marioCtx.beginPath();
+                marioCtx.ellipse(cloudX, 30, 25, 12, 0, 0, Math.PI * 2);
+                marioCtx.fill();
+                marioCtx.beginPath();
+                marioCtx.ellipse(cloudX + 30, 25, 30, 15, 0, 0, Math.PI * 2);
+                marioCtx.fill();
+            }
+
+            // Tierra
+            groundSections.forEach(ground => {
+                const screenX = ground.x - cameraX;
+                if (screenX > -ground.width && screenX < marioCanvas.width) {
+                    // Tierra marrón
+                    marioCtx.fillStyle = '#8B6F47';
+                    marioCtx.fillRect(screenX, ground.y, ground.width, ground.height);
+                    
+                    // Textura de tierra
+                    marioCtx.fillStyle = '#705D40';
+                    for (let i = 0; i < ground.width; i += 20) {
+                        marioCtx.fillRect(screenX + i, ground.y + 5, 10, 3);
+                        marioCtx.fillRect(screenX + i + 10, ground.y + 15, 10, 3);
+                    }
+                    
+                    // Borde
+                    marioCtx.strokeStyle = '#654321';
+                    marioCtx.lineWidth = 2;
+                    marioCtx.strokeRect(screenX, ground.y, ground.width, ground.height);
+                }
+            });
+
+            // Plataformas
+            platforms.forEach((platform, index) => {
+                const screenX = platform.x - cameraX;
+                if (screenX > -platform.width && screenX < marioCanvas.width) {
+                    marioCtx.fillStyle = platformColors[index % platformColors.length];
+                    marioCtx.fillRect(screenX, platform.y, platform.width, platform.height);
+                    
+                    marioCtx.strokeStyle = '#654321';
+                    marioCtx.lineWidth = 2;
+                    marioCtx.strokeRect(screenX, platform.y, platform.width, platform.height);
+                    
+                    marioCtx.fillStyle = 'rgba(0,0,0,0.2)';
+                    marioCtx.fillRect(screenX, platform.y + platform.height - 2, platform.width, 2);
+                }
+            });
+
+            coins.forEach(coin => coin.draw(marioCtx));
+            enemies.forEach(enemy => enemy.draw(marioCtx));
+
+            if (finishFlag) finishFlag.draw(marioCtx);
+
+            mario.draw(marioCtx);
+        }
+
+        function endMarioGame() {
+            marioGameRunning = false;
+            if (marioGameInterval) clearInterval(marioGameInterval);
+
+            marioCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
+
+            marioCtx.fillStyle = '#ff0000';
+            marioCtx.font = 'bold 30px Arial';
+            marioCtx.textAlign = 'center';
+            marioCtx.fillText('GAME OVER', marioCanvas.width / 2, marioCanvas.height / 2 - 30);
+
+            marioCtx.fillStyle = '#FFD700';
+            marioCtx.font = 'bold 24px Arial';
+            marioCtx.fillText('Estrellas: ' + marioScore, marioCanvas.width / 2, marioCanvas.height / 2 + 20);
+        }
+
+        function winMarioGame() {
+            marioGameRunning = false;
+            if (marioGameInterval) clearInterval(marioGameInterval);
+
+            marioCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
+
+            marioCtx.fillStyle = '#FFD700';
+            marioCtx.font = 'bold 40px Arial';
+            marioCtx.textAlign = 'center';
+            marioCtx.fillText('¡GANASTE! 🎉', marioCanvas.width / 2, marioCanvas.height / 2 - 30);
+
+            marioCtx.fillStyle = '#00FF00';
+            marioCtx.font = 'bold 28px Arial';
+            marioCtx.fillText('⭐ ' + marioScore + ' Estrellas', marioCanvas.width / 2, marioCanvas.height / 2 + 20);
+        }
+
+        // ===== FUNCIONES COMPARTIDAS =====
+
+        function updateLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+
+            if (topScores.length === 0) {
+                leaderboardList.innerHTML = '<div class="score-item"><span>Juega para obtener puntuaciones</span></div>';
+                return;
+            }
+
+            topScores.forEach((item, index) => {
+                let medal = '';
+                
+                if (index === 0) {
+                    medal = '🥇';
+                } else if (index === 1) {
+                    medal = '🥈';
+                } else if (index === 2) {
+                    medal = '🥉';
+                } else {
+                    medal = `#${index + 1}`;
+                }
+
+                const scoreItem = document.createElement('div');
+                scoreItem.className = 'score-item';
+                scoreItem.innerHTML = `
+                    <span class="score-position">${medal}</span>
+                    <span>${item.score} pts</span>
+                `;
+                leaderboardList.appendChild(scoreItem);
+            });
+        }
+
+        function clearGame() {
+            gameRunning = false;
+            marioGameRunning = false;
+            if (gameInterval) clearInterval(gameInterval);
+            if (marioGameInterval) clearInterval(marioGameInterval);
+            
+            canvas = document.getElementById('gameCanvas');
+            marioCanvas = document.getElementById('marioCanvas');
+            if (canvas) canvas.style.display = 'none';
+            if (marioCanvas) marioCanvas.style.display = 'none';
+            
+            document.querySelector('.right-panel').style.display = 'none';
+            document.getElementById('debug').style.display = 'none';
+            document.getElementById('instructions').style.display = 'block';
+            document.getElementById('marioInstructions').style.display = 'none';
+        }
+
+        // Inicializar
+        updateLeaderboard();
+        setGridSize('medium');
+        setDifficulty('normal');
+        selectAvatar('boy');
     </script>
 </body>
 </html>
