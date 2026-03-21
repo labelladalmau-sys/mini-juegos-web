@@ -519,7 +519,6 @@
                 <div id="debug">Usa las flechas: ⬅️ ⬆️ ➡️ ⬇️</div>
                 
                 <div class="leaderboard">
-                    <h3>🏆 Top 10</h3>
                     <div id="leaderboardList">
                         <div class="score-item">
                             <span>Juega para obtener puntuaciones</span>
@@ -603,20 +602,18 @@
         let topScores = JSON.parse(localStorage.getItem('snakeTopScores')) || [];
 
         // ===== SELECTOR DE AVATAR =====
-        function selectAvatar(avatar) {
-            currentAvatar = avatar;
-
-            document.getElementById('avatar1').classList.remove('selected');
-            document.getElementById('avatar2').classList.remove('selected');
-
-            if (avatar === 'boy') {
-                document.getElementById('avatar1').classList.add('selected');
-                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👨 Chico';
-            } else {
-                document.getElementById('avatar2').classList.add('selected');
-                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👩 Chica';
-            }
+ function selectAvatar(avatar) {
+        currentAvatar = avatar;
+        document.getElementById('avatar1').classList.remove('selected');
+        document.getElementById('avatar2').classList.remove('selected');
+        if (avatar === 'boy') {
+            document.getElementById('avatar1').classList.add('selected');
+            document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="boy.png" style="height:16px;vertical-align:middle;"> Chico';
+        } else {
+            document.getElementById('avatar2').classList.add('selected');
+            document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="girl.png" style="height:16px;vertical-align:middle;"> Chica';
         }
+    }
 
         // ===== FUNCIÓN SELECTOR DE JUEGO =====
         function selectGame(game) {
