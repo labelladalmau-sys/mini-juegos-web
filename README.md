@@ -1,2 +1,2 @@
-# mini-juegos-web
+# JUEGOS
 Mini juegos interactivos en web
