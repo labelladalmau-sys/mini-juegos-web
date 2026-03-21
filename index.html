@@ -37,61 +37,6 @@
             font-size: 2.5em;
         }
 
-        .avatar-selector {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .avatar-selector h3 {
-            margin-bottom: 15px;
-            color: #FFD700;
-        }
-
-        .avatars-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .avatar-option {
-            cursor: pointer;
-            border: 3px solid transparent;
-            border-radius: 10px;
-            padding: 10px;
-            transition: 0.3s;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .avatar-option:hover {
-            transform: scale(1.05);
-            border-color: #FFD700;
-        }
-
-        .avatar-option.selected {
-            border-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.2);
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-        }
-
-        .avatar-option img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto 10px;
-        }
-
-        .avatar-option p {
-            font-size: 12px;
-            color: #87CEEB;
-            margin: 0;
-        }
-
         .menu {
             margin-bottom: 30px;
             display: flex;
@@ -208,6 +153,62 @@
         .player-info p {
             margin: 5px 0;
             color: #87CEEB;
+        }
+
+        .avatar-selector {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .avatar-selector.visible {
+            display: block;
+        }
+
+        .avatar-selector h4 {
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .avatars-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-option {
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            padding: 8px;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.05);
+            border-color: #FFD700;
+        }
+
+        .avatar-option.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .avatar-option div {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .avatar-option p {
+            font-size: 12px;
+            color: #87CEEB;
+            margin: 0;
         }
 
         .controls-section {
@@ -403,22 +404,6 @@
     <div class="container">
         <h1>🎮 Mini Juegos Web</h1>
         
-        <!-- SELECTOR DE AVATAR -->
-        <div class="avatar-selector">
-            <h3>👤 Selecciona tu Avatar</h3>
-            <div class="avatars-container">
-                <div class="avatar-option selected" id="avatar1" onclick="selectAvatar('boy')">
-                    <div style="font-size: 60px; margin-bottom: 5px;">👨</div>
-                    <p>Chico</p>
-                </div>
-                <div class="avatar-option" id="avatar2" onclick="selectAvatar('girl')">
-                    <div style="font-size: 60px; margin-bottom: 5px;">👩</div>
-                    <p>Chica</p>
-                </div>
-            </div>
-            <p id="selectedAvatarText" style="font-size: 13px; color: #87CEEB; margin: 0;">Avatar seleccionado: 👨 Chico</p>
-        </div>
-
         <!-- SELECTOR DE JUEGO -->
         <div class="game-selector">
             <button onclick="selectGame('snake')" id="btnSnakeGame" class="active">🐍 Snake</button>
@@ -442,12 +427,29 @@
             <canvas id="marioCanvas" width="400" height="300"></canvas>
             
             <div class="right-panel">
-                <!-- INFO DEL JUGADOR -->
-                <div class="player-info">
-                    <p><strong>🎮 Jugador:</strong> <span id="playerName">Chico</span></p>
+                <!-- INFO DEL JUGADOR SNAKE -->
+                <div class="player-info" id="snakePlayerInfo">
+                    <p><strong>🎮 Jugador:</strong> <span id="playerName">Snake Master</span></p>
                 </div>
 
                 <div id="score">📊 Puntuación: 0</div>
+
+                <!-- SELECTOR DE AVATAR (SOLO MARIO) -->
+                <div class="avatar-selector" id="avatarSelector">
+                    <h4>👤 Selecciona tu Avatar</h4>
+                    <div class="avatars-container">
+                        <div class="avatar-option selected" id="avatar1" onclick="selectAvatar('boy')">
+                            <div>👨</div>
+                            <p>Chico</p>
+                        </div>
+                        <div class="avatar-option" id="avatar2" onclick="selectAvatar('girl')">
+                            <div>👩</div>
+                            <p>Chica</p>
+                        </div>
+                    </div>
+                    <p id="selectedAvatarText" style="font-size: 12px; color: #87CEEB; margin-top: 10px; margin-bottom: 0;">Avatar: 👨 Chico</p>
+                </div>
+
                 <div id="marioScore" style="display: none;">⭐ Monedas: 0</div>
 
                 <!-- CONTROLES SNAKE -->
@@ -528,7 +530,7 @@
         </div>
         
         <div class="instructions" id="instructions">
-            <p>👤 Selecciona tu avatar y un juego</p>
+            <p>👤 Selecciona un juego y configuración</p>
             <p>⬅️ Usa las teclas para moverte</p>
             <p><strong>¡Diviértete jugando!</strong></p>
         </div>
@@ -600,18 +602,15 @@
         function selectAvatar(avatar) {
             currentAvatar = avatar;
 
-            // Actualizar botones
             document.getElementById('avatar1').classList.remove('selected');
             document.getElementById('avatar2').classList.remove('selected');
 
             if (avatar === 'boy') {
                 document.getElementById('avatar1').classList.add('selected');
-                document.getElementById('playerName').textContent = 'Chico';
-                document.getElementById('selectedAvatarText').textContent = 'Avatar seleccionado: 👨 Chico';
+                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👨 Chico';
             } else {
                 document.getElementById('avatar2').classList.add('selected');
-                document.getElementById('playerName').textContent = 'Chica';
-                document.getElementById('selectedAvatarText').textContent = 'Avatar seleccionado: 👩 Chica';
+                document.getElementById('selectedAvatarText').textContent = 'Avatar: 👩 Chica';
             }
         }
 
@@ -629,8 +628,10 @@
                 document.getElementById('marioMenu').style.display = 'none';
                 document.getElementById('snakeControls').style.display = 'block';
                 document.getElementById('marioControls').style.display = 'none';
+                document.getElementById('snakePlayerInfo').style.display = 'block';
                 document.getElementById('score').style.display = 'block';
                 document.getElementById('marioScore').style.display = 'none';
+                document.getElementById('avatarSelector').classList.remove('visible');
                 document.getElementById('instructions').style.display = 'block';
                 document.getElementById('marioInstructions').style.display = 'none';
             } else {
@@ -639,8 +640,10 @@
                 document.getElementById('marioMenu').style.display = 'flex';
                 document.getElementById('snakeControls').style.display = 'none';
                 document.getElementById('marioControls').style.display = 'block';
+                document.getElementById('snakePlayerInfo').style.display = 'none';
                 document.getElementById('score').style.display = 'none';
                 document.getElementById('marioScore').style.display = 'block';
+                document.getElementById('avatarSelector').classList.add('visible');
                 document.getElementById('instructions').style.display = 'none';
                 document.getElementById('marioInstructions').style.display = 'block';
             }
@@ -974,7 +977,6 @@
             topScores.push({
                 score: newScore,
                 date: new Date().toLocaleDateString(),
-                avatar: currentAvatar,
                 game: 'snake'
             });
 
