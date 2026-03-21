@@ -115,7 +115,7 @@
 
         #marioCanvas {
             border: 5px solid #FF6B35;
-            background-color: #87CEEB;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
             display: none;
             box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
             border-radius: 10px;
@@ -995,8 +995,8 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.width = 25;
-                this.height = 35;
+                this.width = 35;
+                this.height = 45;
                 this.velocityY = 0;
                 this.velocityX = 0;
                 this.isJumping = false;
@@ -1008,50 +1008,175 @@
                 const screenX = this.x - cameraX;
                 
                 if (currentAvatar === 'boy') {
-                    // CHICO
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(screenX, this.y + 10, this.width, this.height - 10);
-                    
-                    ctx.fillStyle = '#FFDBAC';
+                    // CHICO - Más realista
+                    // Cabeza
+                    ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
+                    ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
                     ctx.fill();
                     
+                    // Sombra de cabeza
+                    ctx.fillStyle = '#D2B48C';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.5, Math.PI * 1.5);
+                    ctx.fill();
+                    
+                    // Cabello
+                    ctx.fillStyle = '#2C2414';
+                    ctx.fillRect(screenX + 8, this.y - 2, 20, 8);
+                    ctx.beginPath();
+                    ctx.arc(screenX + 10, this.y + 2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 26, this.y + 2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Ojos
                     ctx.fillStyle = '#000';
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + 15 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + 21 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(screenX, this.y - 3, this.width, 10);
+                    // Sonrisa
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 9, 2, 0, Math.PI);
+                    ctx.stroke();
                     
-                    ctx.fillStyle = '#FFFF00';
-                    ctx.fillRect(screenX + this.width - 5, this.y, 5, 5);
+                    // Cuerpo (camiseta gris)
+                    ctx.fillStyle = '#A9A9A9';
+                    ctx.fillRect(screenX + 6, this.y + 18, 24, 18);
+                    ctx.fillStyle = '#D3D3D3';
+                    ctx.fillRect(screenX + 6, this.y + 18, 24, 2);
+                    
+                    // Etiqueta TOMMY JEANS
+                    ctx.fillStyle = '#000080';
+                    ctx.fillRect(screenX + 10, this.y + 22, 14, 6);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 4px Arial';
+                    ctx.fillText('TJ', screenX + 12, this.y + 26);
+                    
+                    // Brazos
+                    ctx.fillStyle = '#F4A460';
+                    ctx.fillRect(screenX + 3, this.y + 20, 4, 12);
+                    ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
+                    
+                    // Manos
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Pantalones (azul)
+                    ctx.fillStyle = '#4A7BA7';
+                    ctx.fillRect(screenX + 8, this.y + 36, 19, 9);
+                    
+                    // Zapatos
+                    ctx.fillStyle = '#F5F5DC';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
+                    ctx.fillStyle = '#000';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.strokeRect(screenX + 19, this.y + 42, 8, 4);
+                    
                 } else {
-                    // CHICA
-                    ctx.fillStyle = '#FF69B4';
-                    ctx.fillRect(screenX + 2, this.y + 5, this.width - 4, this.height - 12);
-                    
-                    ctx.fillStyle = '#FFDBAC';
+                    // CHICA - Más realista
+                    // Cabeza
+                    ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
+                    ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    ctx.fillStyle = '#000';
+                    // Sombra de cabeza
+                    ctx.fillStyle = '#D2B48C';
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.3, Math.PI * 1.7);
                     ctx.fill();
                     
+                    // Cabello largo (marrón)
+                    ctx.fillStyle = '#8B6F47';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 18, this.y + 15, 12, 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#704214';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 8, this.y + 12, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 28, this.y + 12, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Ojos (grandes y bonitos)
                     ctx.fillStyle = '#8B4513';
                     ctx.beginPath();
-                    ctx.arc(screenX + this.width / 2, this.y - 2, 7, 0, Math.PI * 2);
+                    ctx.ellipse(screenX + 15, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 21, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Brillo en ojos
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 16, this.y + 6, 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 22, this.y + 6, 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Boca sonrisa
+                    ctx.strokeStyle = '#FF69B4';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 10, 2.5, 0, Math.PI);
+                    ctx.stroke();
+                    
+                    // Top rosa
+                    ctx.fillStyle = '#FF69B4';
+                    ctx.fillRect(screenX + 8, this.y + 18, 20, 12);
+                    ctx.fillStyle = '#FF1493';
+                    ctx.fillRect(screenX + 8, this.y + 18, 20, 1);
+                    
+                    // Brazos
+                    ctx.fillStyle = '#F4A460';
+                    ctx.fillRect(screenX + 4, this.y + 20, 4, 12);
+                    ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
+                    
+                    // Manos
+                    ctx.fillStyle = '#F4A460';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Pantalones vaqueros
+                    ctx.fillStyle = '#1E3A5F';
+                    ctx.fillRect(screenX + 8, this.y + 30, 19, 12);
+                    
+                    // Detalles vaqueros
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 33, 1, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Zapatos
+                    ctx.fillStyle = '#8B5A3C';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
+                    ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
+                    ctx.fillStyle = '#A0826D';
+                    ctx.fillRect(screenX + 8, this.y + 42, 8, 2);
                 }
             }
 
@@ -1060,22 +1185,23 @@
                 this.y += this.velocityY;
                 this.x += this.velocityX;
 
-                if (this.x < cameraX + 50) {
-                    this.x = cameraX + 50;
+                if (this.x < cameraX + 30) {
+                    this.x = cameraX + 30;
                 }
-                if (this.x + this.width > cameraX + marioCanvas.width - 50) {
-                    cameraX = this.x + this.width - marioCanvas.width + 50;
+                if (this.x + this.width > cameraX + marioCanvas.width - 30) {
+                    cameraX = this.x + this.width - marioCanvas.width + 30;
                 }
 
                 marioDistance = Math.floor(cameraX / 10);
 
                 this.onPlatform = false;
+                
                 platforms.forEach(platform => {
                     if (this.velocityY >= 0 &&
                         this.y + this.height >= platform.y &&
-                        this.y + this.height <= platform.y + 10 &&
-                        this.x + this.width > platform.x &&
-                        this.x < platform.x + platform.width) {
+                        this.y + this.height <= platform.y + 15 &&
+                        this.x + this.width > platform.x - 5 &&
+                        this.x < platform.x + platform.width + 5) {
                         this.velocityY = 0;
                         this.y = platform.y - this.height;
                         this.onPlatform = true;
@@ -1083,7 +1209,7 @@
                     }
                 });
 
-                if (this.y > marioCanvas.height + 50) {
+                if (this.y > marioCanvas.height + 100) {
                     marioLives--;
                     if (marioLives <= 0) {
                         endMarioGame();
@@ -1101,8 +1227,8 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.width = 20;
-                this.height = 20;
+                this.width = 30;
+                this.height = 25;
                 this.direction = 1;
                 this.speed = 1;
                 this.alive = true;
@@ -1110,26 +1236,52 @@
 
             draw(ctx) {
                 const screenX = this.x - cameraX;
-                if (this.alive && screenX > -20 && screenX < marioCanvas.width) {
-                    // Champiñón
-                    ctx.fillStyle = '#FF4444';
+                if (this.alive && screenX > -30 && screenX < marioCanvas.width) {
+                    // Champiñón mejorado
+                    // Sombrilla roja
+                    ctx.fillStyle = '#DC143C';
                     ctx.beginPath();
-                    ctx.arc(screenX + 10, this.y + 5, 8, 0, Math.PI * 2);
+                    ctx.ellipse(screenX + 15, this.y + 6, 13, 8, 0, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    ctx.fillStyle = '#8B0000';
-                    ctx.fillRect(screenX + 5, this.y + 10, 10, 8);
+                    // Puntos blancos en la sombrilla
+                    ctx.fillStyle = '#FFF';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 9, this.y + 4, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 2, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 21, this.y + 4, 2, 0, Math.PI * 2);
+                    ctx.fill();
                     
-                    ctx.fillStyle = '#FFFF00';
-                    ctx.fillRect(screenX + 6, this.y + 6, 3, 3);
-                    ctx.fillRect(screenX + 11, this.y + 6, 3, 3);
+                    // Tallo beige
+                    ctx.fillStyle = '#D2B48C';
+                    ctx.fillRect(screenX + 12, this.y + 14, 6, 11);
+                    
+                    // Ojos malvados
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 12, this.y + 7, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(screenX + 18, this.y + 7, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Expresión molesta
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.arc(screenX + 15, this.y + 9, 1.5, Math.PI, Math.PI * 2);
+                    ctx.stroke();
                 }
             }
 
             update() {
                 if (this.alive) {
                     this.x += this.speed * this.direction;
-                    if (this.x < cameraX - 100 || this.x > cameraX + marioCanvas.width + 100) {
+                    if (this.x < cameraX - 50 || this.x > cameraX + marioCanvas.width + 50) {
                         this.direction *= -1;
                     }
                 }
@@ -1144,20 +1296,39 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.radius = 6;
+                this.radius = 7;
                 this.collected = false;
+                this.rotation = Math.random() * Math.PI * 2;
             }
 
             draw(ctx) {
                 const screenX = this.x - cameraX;
-                if (!this.collected && screenX > -10 && screenX < marioCanvas.width) {
+                if (!this.collected && screenX > -15 && screenX < marioCanvas.width + 15) {
+                    ctx.save();
+                    ctx.translate(screenX, this.y);
+                    ctx.rotate(this.rotation);
+                    
+                    // Moneda 3D
                     ctx.fillStyle = '#FFD700';
                     ctx.beginPath();
-                    ctx.arc(screenX, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.strokeStyle = '#FFA500';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#FFA500';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius - 1, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Símbolo de moneda
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 8px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('$', 0, 0);
+                    
+                    ctx.restore();
+                    
+                    this.rotation += 0.05;
                 }
             }
         }
@@ -1166,31 +1337,52 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.width = 30;
-                this.height = 50;
+                this.width = 40;
+                this.height = 60;
+                this.flagWave = 0;
             }
 
             draw(ctx) {
                 const screenX = this.x - cameraX;
                 if (screenX > -50 && screenX < marioCanvas.width + 50) {
-                    // Palo
-                    ctx.fillStyle = '#8B4513';
-                    ctx.fillRect(screenX + 12, this.y, 6, this.height);
+                    this.flagWave += 0.05;
                     
-                    // Bandera
+                    // Palo de madera
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(screenX + 15, this.y, 8, this.height);
+                    ctx.fillStyle = '#A0522D';
+                    ctx.fillRect(screenX + 15, this.y, 4, this.height);
+                    
+                    // Bandera ondeante
                     ctx.fillStyle = '#FF0000';
+                    ctx.save();
+                    ctx.translate(screenX + 23, this.y + 10);
                     ctx.beginPath();
-                    ctx.moveTo(screenX + 18, this.y + 5);
-                    ctx.lineTo(screenX + 30, this.y + 15);
-                    ctx.lineTo(screenX + 18, this.y + 25);
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(8 + Math.sin(this.flagWave) * 3, -5, 20, 0);
+                    ctx.quadraticCurveTo(15, 15, 0, 20);
                     ctx.closePath();
                     ctx.fill();
+                    ctx.restore();
                     
-                    // Decoración
+                    // Borde de bandera
+                    ctx.strokeStyle = '#CC0000';
+                    ctx.lineWidth = 1;
+                    ctx.save();
+                    ctx.translate(screenX + 23, this.y + 10);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(8 + Math.sin(this.flagWave) * 3, -5, 20, 0);
+                    ctx.quadraticCurveTo(15, 15, 0, 20);
+                    ctx.stroke();
+                    ctx.restore();
+                    
+                    // Estrella en la bandera
                     ctx.fillStyle = '#FFD700';
-                    ctx.font = 'bold 20px Arial';
+                    ctx.font = 'bold 16px Arial';
                     ctx.textAlign = 'center';
-                    ctx.fillText('🏁', screenX + 15, this.y + 40);
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('⭐', screenX + 33, this.y + 20);
                 }
             }
 
@@ -1218,17 +1410,16 @@
             cameraX = 0;
             marioGameRunning = true;
 
-            // Plataformas alternadas
             platforms = [
-                { x: 0, y: marioCanvas.height - 30, width: 500, height: 30 } // Suelo
+                { x: 0, y: marioCanvas.height - 30, width: 150, height: 30 }
             ];
 
-            let currentX = 100;
+            let currentX = 120;
             let currentY = marioCanvas.height - 100;
             let alternateLeft = false;
 
-            for (let i = 0; i < 15; i++) {
-                const platformWidth = 80;
+            for (let i = 0; i < 16; i++) {
+                const platformWidth = 90;
                 const platformHeight = 15;
                 
                 platforms.push({
@@ -1238,38 +1429,37 @@
                     height: platformHeight
                 });
 
-                currentX += platformWidth + 60;
+                currentX += platformWidth + 40;
                 
                 if (alternateLeft) {
-                    currentY += 50;
+                    currentY += 45;
                 } else {
-                    currentY -= 50;
+                    currentY -= 45;
                 }
                 
                 alternateLeft = !alternateLeft;
                 
-                if (currentY < 50) currentY = 50;
-                if (currentY > marioCanvas.height - 80) currentY = marioCanvas.height - 80;
+                if (currentY < 60) currentY = 60;
+                if (currentY > marioCanvas.height - 100) currentY = marioCanvas.height - 100;
             }
 
             enemies = [
-                new Enemy(400, 180),
-                new Enemy(700, 120),
-                new Enemy(1000, 150),
-                new Enemy(1300, 100)
+                new Enemy(350, 180),
+                new Enemy(650, 130),
+                new Enemy(950, 160),
+                new Enemy(1250, 100)
             ];
 
             coins = [];
             for (let i = 0; i < 30; i++) {
-                const coinX = 150 + i * 80;
-                const coinY = Math.random() * 100 + 50;
+                const coinX = 180 + i * 90;
+                const coinY = Math.random() * 80 + 60;
                 coins.push(new Coin(coinX, coinY));
             }
 
-            // Bandera de finish
-            finishFlag = new FinishFlag(currentX + 150, marioCanvas.height - 150);
+            finishFlag = new FinishFlag(currentX + 100, marioCanvas.height - 150);
 
-            mario = new MarioPlayer(50, marioCanvas.height - 100);
+            mario = new MarioPlayer(50, marioCanvas.height - 90);
 
             if (marioGameInterval) clearInterval(marioGameInterval);
             marioGameInterval = setInterval(marioGameLoopFunc, 1000 / 60);
@@ -1297,7 +1487,6 @@
             mario.update();
             enemies.forEach(enemy => enemy.update());
 
-            // Colisión con monedas
             coins.forEach((coin) => {
                 if (!coin.collected &&
                     mario.x < coin.x + coin.radius + 10 &&
@@ -1309,26 +1498,23 @@
                 }
             });
 
-            // Colisión con enemigos (champiñones)
             enemies.forEach((enemy, index) => {
                 if (enemy.alive && mario.x < enemy.x + enemy.width &&
                     mario.x + mario.width > enemy.x &&
                     mario.y < enemy.y + enemy.height &&
                     mario.y + mario.height > enemy.y) {
                     
-                    // Si salta encima del champiñón
                     if (mario.velocityY > 0 && mario.y + mario.height - mario.velocityY <= enemy.y + 5) {
                         enemy.kill();
-                        marioScore += 5; // 5 estrellas por matar champiñón
-                        mario.velocityY = -8; // Rebote
+                        marioScore += 5;
+                        mario.velocityY = -8;
                     } else {
-                        // Si lo toca de lado
                         marioLives--;
                         if (marioLives <= 0) {
                             endMarioGame();
                         } else {
                             mario.x = cameraX + 50;
-                            mario.y = marioCanvas.height - 100;
+                            mario.y = marioCanvas.height - 90;
                             mario.velocityY = 0;
                             mario.velocityX = 0;
                         }
@@ -1336,7 +1522,6 @@
                 }
             });
 
-            // Colisión con bandera de finish
             if (finishFlag && finishFlag.checkCollision(mario)) {
                 winMarioGame();
             }
@@ -1351,14 +1536,15 @@
             marioCtx.fillStyle = '#87CEEB';
             marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
 
-            // Nubes decorativas
-            marioCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            // Nubes
+            marioCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
             for (let i = -2; i < 5; i++) {
                 const cloudX = (i * 150 - cameraX * 0.3) % (marioCanvas.width + 100);
                 marioCtx.beginPath();
-                marioCtx.arc(cloudX, 30, 20, 0, Math.PI * 2);
-                marioCtx.arc(cloudX + 25, 25, 25, 0, Math.PI * 2);
-                marioCtx.arc(cloudX + 50, 30, 20, 0, Math.PI * 2);
+                marioCtx.ellipse(cloudX, 30, 25, 12, 0, 0, Math.PI * 2);
+                marioCtx.fill();
+                marioCtx.beginPath();
+                marioCtx.ellipse(cloudX + 30, 25, 30, 15, 0, 0, Math.PI * 2);
                 marioCtx.fill();
             }
 
@@ -1368,22 +1554,22 @@
                 if (screenX > -platform.width && screenX < marioCanvas.width) {
                     marioCtx.fillStyle = platformColors[index % platformColors.length];
                     marioCtx.fillRect(screenX, platform.y, platform.width, platform.height);
+                    
+                    // Borde y sombra
                     marioCtx.strokeStyle = '#654321';
                     marioCtx.lineWidth = 2;
                     marioCtx.strokeRect(screenX, platform.y, platform.width, platform.height);
+                    
+                    marioCtx.fillStyle = 'rgba(0,0,0,0.2)';
+                    marioCtx.fillRect(screenX, platform.y + platform.height - 2, platform.width, 2);
                 }
             });
 
-            // Monedas
             coins.forEach(coin => coin.draw(marioCtx));
-
-            // Enemigos (Champiñones)
             enemies.forEach(enemy => enemy.draw(marioCtx));
 
-            // Bandera de finish
             if (finishFlag) finishFlag.draw(marioCtx);
 
-            // Mario
             mario.draw(marioCtx);
         }
 
