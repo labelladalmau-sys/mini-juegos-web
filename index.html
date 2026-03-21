@@ -498,10 +498,9 @@
                     <div class="controls-section">
                         <h4>🎮 Controles</h4>
                         <p style="font-size: 13px; line-height: 1.6;">
-                            <strong>A/D</strong> - Mover Izq/Der<br>
-                            <strong>ESPACIO</strong> - Saltar<br>
-                            <strong>↑</strong> - Escalar<br>
-                            <strong>↓</strong> - Bajar
+                            <strong>⬅️ ➡️</strong> - Mover<br>
+                            <strong>⬆️</strong> - Saltar<br>
+                            <strong>⬇️</strong> - Bajar
                         </p>
                     </div>
 
@@ -538,9 +537,9 @@
 
         <div class="instructions" id="marioInstructions">
             <p>🍄 ¡Salta sobre los enemigos para derrotarlos!</p>
-            <p>⭐ Recoge monedas para ganar puntos</p>
-            <p>🚀 ¡Corre hacia la derecha para avanzar!</p>
-            <p><strong>¡Evita a Donkey Kong!</strong></p>
+            <p>⭐ Recoge las monedas distribuidas en el camino</p>
+            <p>⬆️ Salta para alcanzar las plataformas más altas</p>
+            <p><strong>¡Evita caer y a los enemigos!</strong></p>
         </div>
     </div>
 
@@ -580,7 +579,7 @@
         let gravity = 0.6;
         let platformColors = ['#8B4513', '#A0522D', '#CD853F'];
         let marioGameRunning = false;
-        let cameraX = 0; // Posición de la cámara para el desplazamiento
+        let cameraX = 0;
 
         // Configuración de dificultades
         const difficulties = {
@@ -1060,7 +1059,7 @@
                 this.y += this.velocityY;
                 this.x += this.velocityX;
 
-                // Límites horizontales con desplazamiento de cámara
+                // Límites horizontales
                 if (this.x < cameraX + 50) {
                     this.x = cameraX + 50;
                 }
@@ -1085,7 +1084,7 @@
                     }
                 });
 
-                if (this.y > marioCanvas.height) {
+                if (this.y > marioCanvas.height + 50) {
                     marioLives--;
                     if (marioLives <= 0) {
                         endMarioGame();
@@ -1143,6 +1142,9 @@
                     ctx.beginPath();
                     ctx.arc(screenX, this.y, this.radius, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.strokeStyle = '#FFA500';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
                 }
             }
         }
@@ -1163,36 +1165,48 @@
             cameraX = 0;
             marioGameRunning = true;
 
-            // Plataformas infinitas (generadas)
+            // Plataformas bien distribuidas
             platforms = [
-                { x: 0, y: marioCanvas.height - 30, width: 400, height: 30 }
+                { x: 0, y: marioCanvas.height - 30, width: 500, height: 30 } // Suelo
             ];
 
-            // Generar plataformas adicionales
-            for (let i = 1; i < 15; i++) {
+            // Generar plataformas en escalera
+            let currentX = 100;
+            let currentY = marioCanvas.height - 100;
+
+            for (let i = 0; i < 20; i++) {
+                const platformWidth = 80 + Math.random() * 60;
+                const platformHeight = 15;
+                
                 platforms.push({
-                    x: i * 200,
-                    y: Math.random() * 100 + 100,
-                    width: Math.random() * 100 + 80,
-                    height: 15
+                    x: currentX,
+                    y: currentY,
+                    width: platformWidth,
+                    height: platformHeight
                 });
+
+                currentX += platformWidth + 30 + Math.random() * 40;
+                currentY = marioCanvas.height - 100 - Math.floor(i / 2) * 50 - Math.random() * 20;
+                
+                // Mantener dentro de límites
+                if (currentY < 50) currentY = 50;
             }
 
             enemies = [
-                new Enemy(300, 180),
-                new Enemy(600, 150),
-                new Enemy(900, 180)
+                new Enemy(400, 180),
+                new Enemy(800, 120),
+                new Enemy(1200, 150)
             ];
 
             coins = [];
-            for (let i = 0; i < 30; i++) {
-                coins.push(new Coin(
-                    Math.random() * 2000 + 100,
-                    Math.random() * 150 + 30
-                ));
+            // Distribución ordenada de monedas
+            for (let i = 0; i < 40; i++) {
+                const coinX = 150 + i * 80;
+                const coinY = Math.random() * 100 + 50;
+                coins.push(new Coin(coinX, coinY));
             }
 
-            mario = new MarioPlayer(50, 100);
+            mario = new MarioPlayer(50, marioCanvas.height - 100);
 
             if (marioGameInterval) clearInterval(marioGameInterval);
             marioGameInterval = setInterval(marioGameLoopFunc, 1000 / 60);
@@ -1204,15 +1218,15 @@
             if (!marioGameRunning) return;
 
             mario.velocityX = 0;
-            if (keys['a'] || keys['A']) {
+            if (keys['ArrowLeft']) {
                 mario.velocityX = -4;
                 mario.direction = -1;
             }
-            if (keys['d'] || keys['D']) {
+            if (keys['ArrowRight']) {
                 mario.velocityX = 4;
                 mario.direction = 1;
             }
-            if ((keys[' '] || keys['ArrowUp']) && mario.onPlatform && !mario.isJumping) {
+            if (keys['ArrowUp'] && mario.onPlatform && !mario.isJumping) {
                 mario.velocityY = -12;
                 mario.isJumping = true;
             }
@@ -1222,10 +1236,10 @@
 
             coins.forEach((coin, index) => {
                 if (!coin.collected &&
-                    mario.x < coin.x + coin.radius &&
-                    mario.x + mario.width > coin.x - coin.radius &&
-                    mario.y < coin.y + coin.radius &&
-                    mario.y + mario.height > coin.y - coin.radius) {
+                    mario.x < coin.x + coin.radius + 10 &&
+                    mario.x + mario.width > coin.x - coin.radius - 10 &&
+                    mario.y < coin.y + coin.radius + 10 &&
+                    mario.y + mario.height > coin.y - coin.radius - 10) {
                     coin.collected = true;
                     marioScore += 10;
                 }
@@ -1245,7 +1259,7 @@
                             endMarioGame();
                         } else {
                             mario.x = cameraX + 50;
-                            mario.y = 100;
+                            mario.y = marioCanvas.height - 100;
                             mario.velocityY = 0;
                             mario.velocityX = 0;
                         }
