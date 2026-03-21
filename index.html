@@ -572,6 +572,7 @@
         let marioLives = 3;
         let marioDistance = 0;
         let platforms = [];
+        let groundSections = [];
         let enemies = [];
         let coins = [];
         let finishFlag = null;
@@ -581,6 +582,7 @@
         let platformColors = ['#8B4513', '#A0522D', '#CD853F'];
         let marioGameRunning = false;
         let cameraX = 0;
+        let levelLength = 0;
 
         // Configuración de dificultades
         const difficulties = {
@@ -1008,20 +1010,17 @@
                 const screenX = this.x - cameraX;
                 
                 if (currentAvatar === 'boy') {
-                    // CHICO - Más realista
-                    // Cabeza
+                    // CHICO
                     ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Sombra de cabeza
                     ctx.fillStyle = '#D2B48C';
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.5, Math.PI * 1.5);
                     ctx.fill();
                     
-                    // Cabello
                     ctx.fillStyle = '#2C2414';
                     ctx.fillRect(screenX + 8, this.y - 2, 20, 8);
                     ctx.beginPath();
@@ -1031,7 +1030,6 @@
                     ctx.arc(screenX + 26, this.y + 2, 5, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Ojos
                     ctx.fillStyle = '#000';
                     ctx.beginPath();
                     ctx.arc(screenX + 15 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
@@ -1040,32 +1038,27 @@
                     ctx.arc(screenX + 21 + this.direction * 2, this.y + 6, 1.5, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Sonrisa
                     ctx.strokeStyle = '#000';
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 9, 2, 0, Math.PI);
                     ctx.stroke();
                     
-                    // Cuerpo (camiseta gris)
                     ctx.fillStyle = '#A9A9A9';
                     ctx.fillRect(screenX + 6, this.y + 18, 24, 18);
                     ctx.fillStyle = '#D3D3D3';
                     ctx.fillRect(screenX + 6, this.y + 18, 24, 2);
                     
-                    // Etiqueta TOMMY JEANS
                     ctx.fillStyle = '#000080';
                     ctx.fillRect(screenX + 10, this.y + 22, 14, 6);
                     ctx.fillStyle = '#fff';
                     ctx.font = 'bold 4px Arial';
                     ctx.fillText('TJ', screenX + 12, this.y + 26);
                     
-                    // Brazos
                     ctx.fillStyle = '#F4A460';
                     ctx.fillRect(screenX + 3, this.y + 20, 4, 12);
                     ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
                     
-                    // Manos
                     ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
                     ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
@@ -1074,11 +1067,9 @@
                     ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Pantalones (azul)
                     ctx.fillStyle = '#4A7BA7';
                     ctx.fillRect(screenX + 8, this.y + 36, 19, 9);
                     
-                    // Zapatos
                     ctx.fillStyle = '#F5F5DC';
                     ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
                     ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
@@ -1088,20 +1079,17 @@
                     ctx.strokeRect(screenX + 19, this.y + 42, 8, 4);
                     
                 } else {
-                    // CHICA - Más realista
-                    // Cabeza
+                    // CHICA
                     ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 8, 10, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Sombra de cabeza
                     ctx.fillStyle = '#D2B48C';
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 8, 10, Math.PI * 0.3, Math.PI * 1.7);
                     ctx.fill();
                     
-                    // Cabello largo (marrón)
                     ctx.fillStyle = '#8B6F47';
                     ctx.beginPath();
                     ctx.ellipse(screenX + 18, this.y + 15, 12, 8, 0, 0, Math.PI * 2);
@@ -1115,7 +1103,6 @@
                     ctx.arc(screenX + 28, this.y + 12, 6, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Ojos (grandes y bonitos)
                     ctx.fillStyle = '#8B4513';
                     ctx.beginPath();
                     ctx.ellipse(screenX + 15, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
@@ -1124,7 +1111,6 @@
                     ctx.ellipse(screenX + 21, this.y + 7, 2, 3, 0, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Brillo en ojos
                     ctx.fillStyle = '#fff';
                     ctx.beginPath();
                     ctx.arc(screenX + 16, this.y + 6, 0.8, 0, Math.PI * 2);
@@ -1133,25 +1119,21 @@
                     ctx.arc(screenX + 22, this.y + 6, 0.8, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Boca sonrisa
                     ctx.strokeStyle = '#FF69B4';
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.arc(screenX + 18, this.y + 10, 2.5, 0, Math.PI);
                     ctx.stroke();
                     
-                    // Top rosa
                     ctx.fillStyle = '#FF69B4';
                     ctx.fillRect(screenX + 8, this.y + 18, 20, 12);
                     ctx.fillStyle = '#FF1493';
                     ctx.fillRect(screenX + 8, this.y + 18, 20, 1);
                     
-                    // Brazos
                     ctx.fillStyle = '#F4A460';
                     ctx.fillRect(screenX + 4, this.y + 20, 4, 12);
                     ctx.fillRect(screenX + 32, this.y + 20, 4, 12);
                     
-                    // Manos
                     ctx.fillStyle = '#F4A460';
                     ctx.beginPath();
                     ctx.arc(screenX + 5, this.y + 32, 2, 0, Math.PI * 2);
@@ -1160,18 +1142,15 @@
                     ctx.arc(screenX + 34, this.y + 32, 2, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Pantalones vaqueros
                     ctx.fillStyle = '#1E3A5F';
                     ctx.fillRect(screenX + 8, this.y + 30, 19, 12);
                     
-                    // Detalles vaqueros
                     ctx.strokeStyle = '#FFD700';
                     ctx.lineWidth = 0.5;
                     ctx.beginPath();
                     ctx.arc(screenX + 15, this.y + 33, 1, 0, Math.PI * 2);
                     ctx.stroke();
                     
-                    // Zapatos
                     ctx.fillStyle = '#8B5A3C';
                     ctx.fillRect(screenX + 8, this.y + 42, 8, 4);
                     ctx.fillRect(screenX + 19, this.y + 42, 8, 4);
@@ -1196,6 +1175,7 @@
 
                 this.onPlatform = false;
                 
+                // Colisión con plataformas
                 platforms.forEach(platform => {
                     if (this.velocityY >= 0 &&
                         this.y + this.height >= platform.y &&
@@ -1204,6 +1184,20 @@
                         this.x < platform.x + platform.width + 5) {
                         this.velocityY = 0;
                         this.y = platform.y - this.height;
+                        this.onPlatform = true;
+                        this.isJumping = false;
+                    }
+                });
+
+                // Colisión con tierra
+                groundSections.forEach(ground => {
+                    if (this.velocityY >= 0 &&
+                        this.y + this.height >= ground.y &&
+                        this.y + this.height <= ground.y + 20 &&
+                        this.x + this.width > ground.x &&
+                        this.x < ground.x + ground.width) {
+                        this.velocityY = 0;
+                        this.y = ground.y - this.height;
                         this.onPlatform = true;
                         this.isJumping = false;
                     }
@@ -1237,14 +1231,20 @@
             draw(ctx) {
                 const screenX = this.x - cameraX;
                 if (this.alive && screenX > -30 && screenX < marioCanvas.width) {
-                    // Champiñón mejorado
-                    // Sombrilla roja
+                    // Champiñón: BLANCO DE DEBAJO, ROJO DE ARRIBA
+                    // Parte blanca (debajo)
+                    ctx.fillStyle = '#FFFACD';
+                    ctx.beginPath();
+                    ctx.ellipse(screenX + 15, this.y + 16, 14, 7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Parte roja (sombrilla arriba)
                     ctx.fillStyle = '#DC143C';
                     ctx.beginPath();
                     ctx.ellipse(screenX + 15, this.y + 6, 13, 8, 0, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Puntos blancos en la sombrilla
+                    // Puntos blancos en la sombrilla roja
                     ctx.fillStyle = '#FFF';
                     ctx.beginPath();
                     ctx.arc(screenX + 9, this.y + 4, 2, 0, Math.PI * 2);
@@ -1256,11 +1256,7 @@
                     ctx.arc(screenX + 21, this.y + 4, 2, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Tallo beige
-                    ctx.fillStyle = '#D2B48C';
-                    ctx.fillRect(screenX + 12, this.y + 14, 6, 11);
-                    
-                    // Ojos malvados
+                    // Ojos
                     ctx.fillStyle = '#000';
                     ctx.beginPath();
                     ctx.arc(screenX + 12, this.y + 7, 1.5, 0, Math.PI * 2);
@@ -1308,7 +1304,6 @@
                     ctx.translate(screenX, this.y);
                     ctx.rotate(this.rotation);
                     
-                    // Moneda 3D
                     ctx.fillStyle = '#FFD700';
                     ctx.beginPath();
                     ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
@@ -1319,7 +1314,6 @@
                     ctx.arc(0, 0, this.radius - 1, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Símbolo de moneda
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 8px Arial';
                     ctx.textAlign = 'center';
@@ -1347,13 +1341,11 @@
                 if (screenX > -50 && screenX < marioCanvas.width + 50) {
                     this.flagWave += 0.05;
                     
-                    // Palo de madera
                     ctx.fillStyle = '#8B4513';
                     ctx.fillRect(screenX + 15, this.y, 8, this.height);
                     ctx.fillStyle = '#A0522D';
                     ctx.fillRect(screenX + 15, this.y, 4, this.height);
                     
-                    // Bandera ondeante
                     ctx.fillStyle = '#FF0000';
                     ctx.save();
                     ctx.translate(screenX + 23, this.y + 10);
@@ -1365,7 +1357,6 @@
                     ctx.fill();
                     ctx.restore();
                     
-                    // Borde de bandera
                     ctx.strokeStyle = '#CC0000';
                     ctx.lineWidth = 1;
                     ctx.save();
@@ -1377,7 +1368,6 @@
                     ctx.stroke();
                     ctx.restore();
                     
-                    // Estrella en la bandera
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 16px Arial';
                     ctx.textAlign = 'center';
@@ -1410,54 +1400,85 @@
             cameraX = 0;
             marioGameRunning = true;
 
-            platforms = [
-                { x: 0, y: marioCanvas.height - 30, width: 150, height: 30 }
-            ];
+            platforms = [];
+            groundSections = [];
 
-            let currentX = 120;
-            let currentY = marioCanvas.height - 100;
-            let alternateLeft = false;
+            // INICIO - Tierra
+            groundSections.push({
+                x: 0,
+                y: marioCanvas.height - 30,
+                width: 200,
+                height: 30
+            });
 
-            for (let i = 0; i < 16; i++) {
-                const platformWidth = 90;
-                const platformHeight = 15;
-                
-                platforms.push({
-                    x: currentX,
-                    y: currentY,
-                    width: platformWidth,
-                    height: platformHeight
-                });
+            let currentX = 200;
+            let isGroundSection = false;
 
-                currentX += platformWidth + 40;
-                
-                if (alternateLeft) {
-                    currentY += 45;
+            // Generar nivel con alternancia entre plataformas y tierra
+            for (let i = 0; i < 20; i++) {
+                if (isGroundSection) {
+                    // Sección de tierra
+                    groundSections.push({
+                        x: currentX,
+                        y: marioCanvas.height - 30,
+                        width: 150,
+                        height: 30
+                    });
+                    currentX += 150 + 40;
                 } else {
-                    currentY -= 45;
+                    // Sección de plataformas
+                    let currentY = marioCanvas.height - 100;
+                    let alternateLeft = false;
+
+                    for (let j = 0; j < 4; j++) {
+                        const platformWidth = 90;
+                        const platformHeight = 15;
+                        
+                        platforms.push({
+                            x: currentX,
+                            y: currentY,
+                            width: platformWidth,
+                            height: platformHeight
+                        });
+
+                        currentX += platformWidth + 40;
+                        
+                        if (alternateLeft) {
+                            currentY += 45;
+                        } else {
+                            currentY -= 45;
+                        }
+                        
+                        alternateLeft = !alternateLeft;
+                        
+                        if (currentY < 60) currentY = 60;
+                        if (currentY > marioCanvas.height - 100) currentY = marioCanvas.height - 100;
+                    }
                 }
-                
-                alternateLeft = !alternateLeft;
-                
-                if (currentY < 60) currentY = 60;
-                if (currentY > marioCanvas.height - 100) currentY = marioCanvas.height - 100;
+
+                isGroundSection = !isGroundSection;
             }
 
+            levelLength = currentX;
+
+            // Enemigos distribuidos
             enemies = [
                 new Enemy(350, 180),
-                new Enemy(650, 130),
-                new Enemy(950, 160),
-                new Enemy(1250, 100)
+                new Enemy(700, 180),
+                new Enemy(1100, 180),
+                new Enemy(1500, 180)
             ];
 
+            // Monedas
             coins = [];
-            for (let i = 0; i < 30; i++) {
-                const coinX = 180 + i * 90;
+            for (let i = 0; i < 40; i++) {
+                const coinX = 150 + i * 90;
                 const coinY = Math.random() * 80 + 60;
                 coins.push(new Coin(coinX, coinY));
             }
 
-            finishFlag = new FinishFlag(currentX + 100, marioCanvas.height - 150);
+            // Bandera de meta FINAL
+            finishFlag = new FinishFlag(levelLength + 50, marioCanvas.height - 150);
 
             mario = new MarioPlayer(50, marioCanvas.height - 90);
 
@@ -1548,6 +1569,28 @@
                 marioCtx.fill();
             }
 
+            // Tierra
+            groundSections.forEach(ground => {
+                const screenX = ground.x - cameraX;
+                if (screenX > -ground.width && screenX < marioCanvas.width) {
+                    // Tierra marrón
+                    marioCtx.fillStyle = '#8B6F47';
+                    marioCtx.fillRect(screenX, ground.y, ground.width, ground.height);
+                    
+                    // Textura de tierra
+                    marioCtx.fillStyle = '#705D40';
+                    for (let i = 0; i < ground.width; i += 20) {
+                        marioCtx.fillRect(screenX + i, ground.y + 5, 10, 3);
+                        marioCtx.fillRect(screenX + i + 10, ground.y + 15, 10, 3);
+                    }
+                    
+                    // Borde
+                    marioCtx.strokeStyle = '#654321';
+                    marioCtx.lineWidth = 2;
+                    marioCtx.strokeRect(screenX, ground.y, ground.width, ground.height);
+                }
+            });
+
             // Plataformas
             platforms.forEach((platform, index) => {
                 const screenX = platform.x - cameraX;
@@ -1555,7 +1598,6 @@
                     marioCtx.fillStyle = platformColors[index % platformColors.length];
                     marioCtx.fillRect(screenX, platform.y, platform.width, platform.height);
                     
-                    // Borde y sombra
                     marioCtx.strokeStyle = '#654321';
                     marioCtx.lineWidth = 2;
                     marioCtx.strokeRect(screenX, platform.y, platform.width, platform.height);
