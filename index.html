@@ -121,6 +121,7 @@
             border-radius: 10px;
             width: 400px;
             height: 300px;
+            overflow: hidden;
         }
 
         .right-panel {
@@ -497,7 +498,7 @@
                     <div class="controls-section">
                         <h4>🎮 Controles</h4>
                         <p style="font-size: 13px; line-height: 1.6;">
-                            <strong>A/D</strong> - Mover<br>
+                            <strong>A/D</strong> - Mover Izq/Der<br>
                             <strong>ESPACIO</strong> - Saltar<br>
                             <strong>↑</strong> - Escalar<br>
                             <strong>↓</strong> - Bajar
@@ -510,8 +511,8 @@
                             <span class="info-value" id="marioLives">❤️ 3</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Nivel:</span>
-                            <span class="info-value" id="marioLevel">1</span>
+                            <span class="info-label">Distancia:</span>
+                            <span class="info-value" id="marioDistance">0m</span>
                         </div>
                     </div>
                 </div>
@@ -538,7 +539,7 @@
         <div class="instructions" id="marioInstructions">
             <p>🍄 ¡Salta sobre los enemigos para derrotarlos!</p>
             <p>⭐ Recoge monedas para ganar puntos</p>
-            <p>🪜 Alcanza el martillo para destruir enemigos</p>
+            <p>🚀 ¡Corre hacia la derecha para avanzar!</p>
             <p><strong>¡Evita a Donkey Kong!</strong></p>
         </div>
     </div>
@@ -570,7 +571,7 @@
         let marioCtx = null;
         let marioScore = 0;
         let marioLives = 3;
-        let marioLevel = 1;
+        let marioDistance = 0;
         let platforms = [];
         let enemies = [];
         let coins = [];
@@ -579,6 +580,7 @@
         let gravity = 0.6;
         let platformColors = ['#8B4513', '#A0522D', '#CD853F'];
         let marioGameRunning = false;
+        let cameraX = 0; // Posición de la cámara para el desplazamiento
 
         // Configuración de dificultades
         const difficulties = {
@@ -1003,50 +1005,52 @@
             }
 
             draw(ctx) {
+                const screenX = this.x - cameraX;
+                
                 if (currentAvatar === 'boy') {
                     // CHICO
                     ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(this.x, this.y + 10, this.width, this.height - 10);
+                    ctx.fillRect(screenX, this.y + 10, this.width, this.height - 10);
                     
                     ctx.fillStyle = '#FFDBAC';
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
                     ctx.fill();
                     
                     ctx.fillStyle = '#000';
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
                     ctx.fill();
                     
                     ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(this.x, this.y - 3, this.width, 10);
+                    ctx.fillRect(screenX, this.y - 3, this.width, 10);
                     
                     ctx.fillStyle = '#FFFF00';
-                    ctx.fillRect(this.x + this.width - 5, this.y, 5, 5);
+                    ctx.fillRect(screenX + this.width - 5, this.y, 5, 5);
                 } else {
                     // CHICA
                     ctx.fillStyle = '#FF69B4';
-                    ctx.fillRect(this.x + 2, this.y + 5, this.width - 4, this.height - 12);
+                    ctx.fillRect(screenX + 2, this.y + 5, this.width - 4, this.height - 12);
                     
                     ctx.fillStyle = '#FFDBAC';
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
                     ctx.fill();
                     
                     ctx.fillStyle = '#000';
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2 - 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2 + 2 + this.direction * 3, this.y + 5, 2, 0, Math.PI * 2);
                     ctx.fill();
                     
                     ctx.fillStyle = '#8B4513';
                     ctx.beginPath();
-                    ctx.arc(this.x + this.width / 2, this.y - 2, 7, 0, Math.PI * 2);
+                    ctx.arc(screenX + this.width / 2, this.y - 2, 7, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
@@ -1056,8 +1060,16 @@
                 this.y += this.velocityY;
                 this.x += this.velocityX;
 
-                if (this.x < 0) this.x = 0;
-                if (this.x + this.width > marioCanvas.width) this.x = marioCanvas.width - this.width;
+                // Límites horizontales con desplazamiento de cámara
+                if (this.x < cameraX + 50) {
+                    this.x = cameraX + 50;
+                }
+                if (this.x + this.width > cameraX + marioCanvas.width - 50) {
+                    cameraX = this.x + this.width - marioCanvas.width + 50;
+                }
+
+                // Actualizar distancia
+                marioDistance = Math.floor(cameraX / 10);
 
                 this.onPlatform = false;
                 platforms.forEach(platform => {
@@ -1078,7 +1090,7 @@
                     if (marioLives <= 0) {
                         endMarioGame();
                     } else {
-                        mario.x = 50;
+                        mario.x = cameraX + 50;
                         mario.y = 100;
                         mario.velocityY = 0;
                         mario.velocityX = 0;
@@ -1094,20 +1106,23 @@
                 this.width = 20;
                 this.height = 20;
                 this.direction = 1;
-                this.speed = 2;
+                this.speed = 1.5;
             }
 
             draw(ctx) {
-                ctx.fillStyle = '#8B0000';
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-                ctx.fillStyle = '#000';
-                ctx.fillRect(this.x + 4, this.y + 4, 4, 4);
-                ctx.fillRect(this.x + 12, this.y + 4, 4, 4);
+                const screenX = this.x - cameraX;
+                if (screenX > -20 && screenX < marioCanvas.width) {
+                    ctx.fillStyle = '#8B0000';
+                    ctx.fillRect(screenX, this.y, this.width, this.height);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(screenX + 4, this.y + 4, 4, 4);
+                    ctx.fillRect(screenX + 12, this.y + 4, 4, 4);
+                }
             }
 
             update() {
                 this.x += this.speed * this.direction;
-                if (this.x < 0 || this.x + this.width > marioCanvas.width) {
+                if (this.x < cameraX - 100 || this.x > cameraX + marioCanvas.width + 100) {
                     this.direction *= -1;
                 }
             }
@@ -1122,10 +1137,13 @@
             }
 
             draw(ctx) {
-                ctx.fillStyle = '#FFD700';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
+                const screenX = this.x - cameraX;
+                if (!this.collected && screenX > -10 && screenX < marioCanvas.width) {
+                    ctx.fillStyle = '#FFD700';
+                    ctx.beginPath();
+                    ctx.arc(screenX, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
         }
 
@@ -1141,28 +1159,36 @@
 
             marioScore = 0;
             marioLives = 3;
-            marioLevel = 1;
+            marioDistance = 0;
+            cameraX = 0;
             marioGameRunning = true;
 
+            // Plataformas infinitas (generadas)
             platforms = [
-                { x: 0, y: marioCanvas.height - 30, width: marioCanvas.width, height: 30 },
-                { x: 50, y: 200, width: 150, height: 15 },
-                { x: 250, y: 200, width: 150, height: 15 },
-                { x: 100, y: 120, width: 200, height: 15 },
-                { x: 50, y: 50, width: 100, height: 15 }
+                { x: 0, y: marioCanvas.height - 30, width: 400, height: 30 }
             ];
 
+            // Generar plataformas adicionales
+            for (let i = 1; i < 15; i++) {
+                platforms.push({
+                    x: i * 200,
+                    y: Math.random() * 100 + 100,
+                    width: Math.random() * 100 + 80,
+                    height: 15
+                });
+            }
+
             enemies = [
-                new Enemy(100, 180),
                 new Enemy(300, 180),
-                new Enemy(150, 100)
+                new Enemy(600, 150),
+                new Enemy(900, 180)
             ];
 
             coins = [];
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 30; i++) {
                 coins.push(new Coin(
-                    Math.random() * (marioCanvas.width - 40) + 20,
-                    Math.random() * (marioCanvas.height - 100) + 20
+                    Math.random() * 2000 + 100,
+                    Math.random() * 150 + 30
                 ));
             }
 
@@ -1178,8 +1204,14 @@
             if (!marioGameRunning) return;
 
             mario.velocityX = 0;
-            if (keys['a'] || keys['A']) mario.velocityX = -4;
-            if (keys['d'] || keys['D']) mario.velocityX = 4;
+            if (keys['a'] || keys['A']) {
+                mario.velocityX = -4;
+                mario.direction = -1;
+            }
+            if (keys['d'] || keys['D']) {
+                mario.velocityX = 4;
+                mario.direction = 1;
+            }
             if ((keys[' '] || keys['ArrowUp']) && mario.onPlatform && !mario.isJumping) {
                 mario.velocityY = -12;
                 mario.isJumping = true;
@@ -1212,7 +1244,7 @@
                         if (marioLives <= 0) {
                             endMarioGame();
                         } else {
-                            mario.x = 50;
+                            mario.x = cameraX + 50;
                             mario.y = 100;
                             mario.velocityY = 0;
                             mario.velocityX = 0;
@@ -1223,6 +1255,7 @@
 
             document.getElementById('marioScore').textContent = '⭐ Monedas: ' + marioScore;
             document.getElementById('marioLives').textContent = '❤️ ' + marioLives;
+            document.getElementById('marioDistance').textContent = marioDistance + 'm';
             drawMarioGame();
         }
 
@@ -1230,20 +1263,36 @@
             marioCtx.fillStyle = '#87CEEB';
             marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
 
+            // Nubes decorativas
+            marioCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            for (let i = -2; i < 5; i++) {
+                const cloudX = (i * 150 - cameraX * 0.3) % (marioCanvas.width + 100);
+                marioCtx.beginPath();
+                marioCtx.arc(cloudX, 30, 20, 0, Math.PI * 2);
+                marioCtx.arc(cloudX + 25, 25, 25, 0, Math.PI * 2);
+                marioCtx.arc(cloudX + 50, 30, 20, 0, Math.PI * 2);
+                marioCtx.fill();
+            }
+
+            // Plataformas
             platforms.forEach((platform, index) => {
-                marioCtx.fillStyle = platformColors[index % platformColors.length];
-                marioCtx.fillRect(platform.x, platform.y, platform.width, platform.height);
-                marioCtx.strokeStyle = '#654321';
-                marioCtx.lineWidth = 2;
-                marioCtx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+                const screenX = platform.x - cameraX;
+                if (screenX > -platform.width && screenX < marioCanvas.width) {
+                    marioCtx.fillStyle = platformColors[index % platformColors.length];
+                    marioCtx.fillRect(screenX, platform.y, platform.width, platform.height);
+                    marioCtx.strokeStyle = '#654321';
+                    marioCtx.lineWidth = 2;
+                    marioCtx.strokeRect(screenX, platform.y, platform.width, platform.height);
+                }
             });
 
-            coins.forEach(coin => {
-                if (!coin.collected) coin.draw(marioCtx);
-            });
+            // Monedas
+            coins.forEach(coin => coin.draw(marioCtx));
 
+            // Enemigos
             enemies.forEach(enemy => enemy.draw(marioCtx));
 
+            // Mario
             mario.draw(marioCtx);
         }
 
