@@ -451,7 +451,7 @@
                     <p id="selectedAvatarText" style="font-size: 12px; color: #87CEEB; margin-top: 10px; margin-bottom: 0;">Avatar: 👨 Chico</p>
                 </div>
 
-                <div id="marioScore" style="display: none;">⭐ Monedas: 0</div>
+                <div id="marioScore" style="display: none;">⭐ Estrellas: 0</div>
 
                 <!-- CONTROLES SNAKE -->
                 <div id="snakeControls">
@@ -500,7 +500,7 @@
                         <p style="font-size: 13px; line-height: 1.6;">
                             <strong>⬅️ ➡️</strong> - Mover<br>
                             <strong>⬆️</strong> - Saltar<br>
-                            <strong>⬇️</strong> - Bajar
+                            <strong>💫</strong> - Salta champiñones
                         </p>
                     </div>
 
@@ -536,10 +536,10 @@
         </div>
 
         <div class="instructions" id="marioInstructions">
-            <p>🍄 ¡Salta sobre los enemigos para derrotarlos!</p>
+            <p>🍄 ¡Salta sobre los champiñones para matarlos y obtener estrellas!</p>
             <p>⭐ Recoge las monedas distribuidas en el camino</p>
-            <p>⬆️ Salta para alcanzar las plataformas más altas</p>
-            <p><strong>¡Evita caer y a los enemigos!</strong></p>
+            <p>🚩 Llega a la bandera de finish para ganar</p>
+            <p><strong>¡Evita caer y completa el nivel!</strong></p>
         </div>
     </div>
 
@@ -574,6 +574,7 @@
         let platforms = [];
         let enemies = [];
         let coins = [];
+        let finishFlag = null;
         let marioGameInterval = null;
         let keys = {};
         let gravity = 0.6;
@@ -1059,7 +1060,6 @@
                 this.y += this.velocityY;
                 this.x += this.velocityX;
 
-                // Límites horizontales
                 if (this.x < cameraX + 50) {
                     this.x = cameraX + 50;
                 }
@@ -1067,7 +1067,6 @@
                     cameraX = this.x + this.width - marioCanvas.width + 50;
                 }
 
-                // Actualizar distancia
                 marioDistance = Math.floor(cameraX / 10);
 
                 this.onPlatform = false;
@@ -1105,25 +1104,39 @@
                 this.width = 20;
                 this.height = 20;
                 this.direction = 1;
-                this.speed = 1.5;
+                this.speed = 1;
+                this.alive = true;
             }
 
             draw(ctx) {
                 const screenX = this.x - cameraX;
-                if (screenX > -20 && screenX < marioCanvas.width) {
+                if (this.alive && screenX > -20 && screenX < marioCanvas.width) {
+                    // Champiñón
+                    ctx.fillStyle = '#FF4444';
+                    ctx.beginPath();
+                    ctx.arc(screenX + 10, this.y + 5, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    
                     ctx.fillStyle = '#8B0000';
-                    ctx.fillRect(screenX, this.y, this.width, this.height);
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(screenX + 4, this.y + 4, 4, 4);
-                    ctx.fillRect(screenX + 12, this.y + 4, 4, 4);
+                    ctx.fillRect(screenX + 5, this.y + 10, 10, 8);
+                    
+                    ctx.fillStyle = '#FFFF00';
+                    ctx.fillRect(screenX + 6, this.y + 6, 3, 3);
+                    ctx.fillRect(screenX + 11, this.y + 6, 3, 3);
                 }
             }
 
             update() {
-                this.x += this.speed * this.direction;
-                if (this.x < cameraX - 100 || this.x > cameraX + marioCanvas.width + 100) {
-                    this.direction *= -1;
+                if (this.alive) {
+                    this.x += this.speed * this.direction;
+                    if (this.x < cameraX - 100 || this.x > cameraX + marioCanvas.width + 100) {
+                        this.direction *= -1;
+                    }
                 }
+            }
+
+            kill() {
+                this.alive = false;
             }
         }
 
@@ -1149,6 +1162,46 @@
             }
         }
 
+        class FinishFlag {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 30;
+                this.height = 50;
+            }
+
+            draw(ctx) {
+                const screenX = this.x - cameraX;
+                if (screenX > -50 && screenX < marioCanvas.width + 50) {
+                    // Palo
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(screenX + 12, this.y, 6, this.height);
+                    
+                    // Bandera
+                    ctx.fillStyle = '#FF0000';
+                    ctx.beginPath();
+                    ctx.moveTo(screenX + 18, this.y + 5);
+                    ctx.lineTo(screenX + 30, this.y + 15);
+                    ctx.lineTo(screenX + 18, this.y + 25);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Decoración
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏁', screenX + 15, this.y + 40);
+                }
+            }
+
+            checkCollision(mario) {
+                return mario.x < this.x + this.width &&
+                       mario.x + mario.width > this.x &&
+                       mario.y < this.y + this.height &&
+                       mario.y + mario.height > this.y;
+            }
+        }
+
         function startMarioGame() {
             marioCanvas = document.getElementById('marioCanvas');
             marioCtx = marioCanvas.getContext('2d');
@@ -1165,17 +1218,17 @@
             cameraX = 0;
             marioGameRunning = true;
 
-            // Plataformas bien distribuidas
+            // Plataformas alternadas
             platforms = [
                 { x: 0, y: marioCanvas.height - 30, width: 500, height: 30 } // Suelo
             ];
 
-            // Generar plataformas en escalera
             let currentX = 100;
             let currentY = marioCanvas.height - 100;
+            let alternateLeft = false;
 
-            for (let i = 0; i < 20; i++) {
-                const platformWidth = 80 + Math.random() * 60;
+            for (let i = 0; i < 15; i++) {
+                const platformWidth = 80;
                 const platformHeight = 15;
                 
                 platforms.push({
@@ -1185,26 +1238,36 @@
                     height: platformHeight
                 });
 
-                currentX += platformWidth + 30 + Math.random() * 40;
-                currentY = marioCanvas.height - 100 - Math.floor(i / 2) * 50 - Math.random() * 20;
+                currentX += platformWidth + 60;
                 
-                // Mantener dentro de límites
+                if (alternateLeft) {
+                    currentY += 50;
+                } else {
+                    currentY -= 50;
+                }
+                
+                alternateLeft = !alternateLeft;
+                
                 if (currentY < 50) currentY = 50;
+                if (currentY > marioCanvas.height - 80) currentY = marioCanvas.height - 80;
             }
 
             enemies = [
                 new Enemy(400, 180),
-                new Enemy(800, 120),
-                new Enemy(1200, 150)
+                new Enemy(700, 120),
+                new Enemy(1000, 150),
+                new Enemy(1300, 100)
             ];
 
             coins = [];
-            // Distribución ordenada de monedas
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 30; i++) {
                 const coinX = 150 + i * 80;
                 const coinY = Math.random() * 100 + 50;
                 coins.push(new Coin(coinX, coinY));
             }
+
+            // Bandera de finish
+            finishFlag = new FinishFlag(currentX + 150, marioCanvas.height - 150);
 
             mario = new MarioPlayer(50, marioCanvas.height - 100);
 
@@ -1234,26 +1297,32 @@
             mario.update();
             enemies.forEach(enemy => enemy.update());
 
-            coins.forEach((coin, index) => {
+            // Colisión con monedas
+            coins.forEach((coin) => {
                 if (!coin.collected &&
                     mario.x < coin.x + coin.radius + 10 &&
                     mario.x + mario.width > coin.x - coin.radius - 10 &&
                     mario.y < coin.y + coin.radius + 10 &&
                     mario.y + mario.height > coin.y - coin.radius - 10) {
                     coin.collected = true;
-                    marioScore += 10;
+                    marioScore += 1;
                 }
             });
 
-            enemies.forEach(enemy => {
-                if (mario.x < enemy.x + enemy.width &&
+            // Colisión con enemigos (champiñones)
+            enemies.forEach((enemy, index) => {
+                if (enemy.alive && mario.x < enemy.x + enemy.width &&
                     mario.x + mario.width > enemy.x &&
                     mario.y < enemy.y + enemy.height &&
                     mario.y + mario.height > enemy.y) {
+                    
+                    // Si salta encima del champiñón
                     if (mario.velocityY > 0 && mario.y + mario.height - mario.velocityY <= enemy.y + 5) {
-                        enemies.splice(enemies.indexOf(enemy), 1);
-                        marioScore += 50;
+                        enemy.kill();
+                        marioScore += 5; // 5 estrellas por matar champiñón
+                        mario.velocityY = -8; // Rebote
                     } else {
+                        // Si lo toca de lado
                         marioLives--;
                         if (marioLives <= 0) {
                             endMarioGame();
@@ -1267,7 +1336,12 @@
                 }
             });
 
-            document.getElementById('marioScore').textContent = '⭐ Monedas: ' + marioScore;
+            // Colisión con bandera de finish
+            if (finishFlag && finishFlag.checkCollision(mario)) {
+                winMarioGame();
+            }
+
+            document.getElementById('marioScore').textContent = '⭐ Estrellas: ' + marioScore;
             document.getElementById('marioLives').textContent = '❤️ ' + marioLives;
             document.getElementById('marioDistance').textContent = marioDistance + 'm';
             drawMarioGame();
@@ -1303,8 +1377,11 @@
             // Monedas
             coins.forEach(coin => coin.draw(marioCtx));
 
-            // Enemigos
+            // Enemigos (Champiñones)
             enemies.forEach(enemy => enemy.draw(marioCtx));
+
+            // Bandera de finish
+            if (finishFlag) finishFlag.draw(marioCtx);
 
             // Mario
             mario.draw(marioCtx);
@@ -1324,7 +1401,24 @@
 
             marioCtx.fillStyle = '#FFD700';
             marioCtx.font = 'bold 24px Arial';
-            marioCtx.fillText('Puntuación: ' + marioScore, marioCanvas.width / 2, marioCanvas.height / 2 + 20);
+            marioCtx.fillText('Estrellas: ' + marioScore, marioCanvas.width / 2, marioCanvas.height / 2 + 20);
+        }
+
+        function winMarioGame() {
+            marioGameRunning = false;
+            if (marioGameInterval) clearInterval(marioGameInterval);
+
+            marioCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            marioCtx.fillRect(0, 0, marioCanvas.width, marioCanvas.height);
+
+            marioCtx.fillStyle = '#FFD700';
+            marioCtx.font = 'bold 40px Arial';
+            marioCtx.textAlign = 'center';
+            marioCtx.fillText('¡GANASTE! 🎉', marioCanvas.width / 2, marioCanvas.height / 2 - 30);
+
+            marioCtx.fillStyle = '#00FF00';
+            marioCtx.font = 'bold 28px Arial';
+            marioCtx.fillText('⭐ ' + marioScore + ' Estrellas', marioCanvas.width / 2, marioCanvas.height / 2 + 20);
         }
 
         // ===== FUNCIONES COMPARTIDAS =====
