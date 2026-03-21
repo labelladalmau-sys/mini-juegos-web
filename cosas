@@ -1,0 +1,22 @@
+const boySprite = new Image();
+boySprite.src = 'boy.png';    // Imagen chico (Image 1)
+const girlSprite = new Image();
+girlSprite.src = 'girl.png';  // Imagen chica (Image 2)
+const mushroomSprite = new Image();
+mushroomSprite.src = 'mushroom.png'; // Imagen champiñón (Image 3)
+const coinSprite = new Image();
+coinSprite.src = 'coin.png';  // Añade una moneda tipo Mario a tu carpeta
+function selectAvatar(avatar) {
+    currentAvatar = avatar;
+
+    document.getElementById('avatar1').classList.remove('selected');
+    document.getElementById('avatar2').classList.remove('selected');
+
+    if (avatar === 'boy') {
+        document.getElementById('avatar1').classList.add('selected');
+        document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="boy.png" style="height:16px;vertical-align:middle;"> Chico';
+    } else {
+        document.getElementById('avatar2').classList.add('selected');
+        document.getElementById('selectedAvatarText').innerHTML = 'Avatar: <img src="girl.png" style="height:16px;vertical-align:middle;"> Chica';
+    }
+}
